@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terima Kasih Kak Vava</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 20px;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 1s ease-in 4s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            object-fit: cover;
+            animation: zoomInRotate 1.5s ease-out;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+
+        @keyframes zoomInRotate {
+            from {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .welcome-text {
+            color: white;
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-top: 30px;
+            animation: slideUpBounce 1.2s ease-out 0.5s both;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideUpBounce {
+            0% {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            60% {
+                transform: translateY(-20px);
+                opacity: 1;
+            }
+            80% {
+                transform: translateY(10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .sparkles {
+            position: absolute;
+            font-size: 30px;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+
+        .music-icon {
+            font-size: 24px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Main Content */
+        .main-content {
+            opacity: 0;
+            animation: showContent 1s ease-in 4.5s forwards;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes showContent {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Page Container */
+        .page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+            position: relative;
+        }
+
+        .page1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .page2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .page3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .page4 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .page5 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .page6 {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            max-width: 750px;
+            padding: 50px 40px;
+            text-align: center;
+            animation: cardSlideUp 0.8s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes cardSlideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Profile photo in cards */
+        .card-profile {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #667eea;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            object-fit: cover;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            animation: rotateIn 1s ease-out;
+        }
+
+        @keyframes rotateIn {
+            from {
+                transform: rotate(-360deg) scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .page1 h1 { color: #667eea; }
+        .page2 h1 { color: #f5576c; }
+        .page3 h1 { color: #00f2fe; }
+        .page4 h1 { color: #38f9d7; }
+        .page5 h1 { color: #fa709a; }
+        .page6 h1 { color: #30cfd0; }
+
+        .recipient {
+            font-size: 1.9em;
+            margin-bottom: 30px;
+            font-weight: 600;
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .page1 .recipient { color: #764ba2; }
+        .page2 .recipient { color: #f093fb; }
+        .page3 .recipient { color: #4facfe; }
+        .page4 .recipient { color: #43e97b; }
+        .page5 .recipient { color: #fee140; }
+        .page6 .recipient { color: #30cfd0; }
+
+        .message {
+            color: #555;
+            font-size: 1.15em;
+            line-height: 1.9;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .icon {
+            font-size: 90px;
+            margin-bottom: 20px;
+            animation: bounceRotate 2s infinite;
+        }
+
+        @keyframes bounceRotate {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-25px) rotate(-10deg);
+            }
+            75% {
+                transform: translateY(-25px) rotate(10deg);
+            }
+        }
+
+        .decoration {
+            margin: 25px 0;
+            font-size: 45px;
+            opacity: 0.7;
+            animation: wiggle 2s infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+
+        .hearts {
+            font-size: 35px;
+            margin: 25px 0;
+            animation: heartBeat 1.5s infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.2); }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            animation: upDown 1.5s infinite;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes upDown {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(15px); }
+        }
+
+        .scroll-indicator::after {
+            content: '⬇️';
+            display: block;
+            font-size: 28px;
+            margin-top: 10px;
+        }
+
+        /* List Styling */
+        .memory-list {
+            text-align: left;
+            margin: 20px auto;
+            max-width: 550px;
+        }
+
+        .memory-list li {
+            margin: 18px 0;
+            padding-left: 10px;
+            color: #555;
+            font-size: 1.15em;
+            line-height: 1.7;
+            animation: slideInLeft 0.5s ease-out backwards;
+        }
+
+        .memory-list li:nth-child(1) { animation-delay: 0.2s; }
+        .memory-list li:nth-child(2) { animation-delay: 0.4s; }
+        .memory-list li:nth-child(3) { animation-delay: 0.6s; }
+        .memory-list li:nth-child(4) { animation-delay: 0.8s; }
+
+        .signature {
+            font-style: italic;
+            font-size: 1.3em;
+            margin-top: 30px;
+            color: #667eea;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Photo Gallery Animation */
+        .photo-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .photo-item {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            object-fit: cover;
+            animation: photoFloat 3s ease-in-out infinite;
+            transition: transform 0.3s;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.2) rotate(5deg);
+            z-index: 10;
+        }
+
+        .photo-item:nth-child(1) { animation-delay: 0s; }
+        .photo-item:nth-child(2) { animation-delay: 0.5s; }
+        .photo-item:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes photoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Timeline styles */
+        .timeline {
+            max-width: 600px;
+            margin: 30px auto;
+            text-align: left;
+        }
+
+        .timeline-item {
+            padding: 20px;
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            animation: slideInRight 0.8s ease-out backwards;
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.6s; }
+
+        .timeline-date {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Quote box */
+        .quote-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            border-left: 5px solid #f5576c;
+            margin: 30px 0;
+            font-style: italic;
+            font-size: 1.2em;
+            color: #555;
+            position: relative;
+            animation: scaleIn 0.8s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .quote-box::before {
+            content: '"';
+            font-size: 60px;
+            color: #f5576c;
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-family: Georgia, serif;
+        }
+
+        /* Floating badges */
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            animation: badgeBounce 2s ease-in-out infinite;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .badge:nth-child(1) { animation-delay: 0s; }
+        .badge:nth-child(2) { animation-delay: 0.3s; }
+        .badge:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes badgeBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Confetti animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f5576c;
+            animation: confettiFall 3s linear infinite;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stats counter */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            animation: popIn 0.6s ease-out backwards;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.2s; }
+        .stat-item:nth-child(2) { animation-delay: 0.4s; }
+        .stat-item:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 2em;
+                margin-top: 20px;
+            }
+            
+            .profile-photo {
+                width: 130px;
+                height: 130px;
+                font-size: 55px;
+                border: 4px solid white;
+            }
+
+            .card-profile {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+                border: 3px solid #667eea;
+            }
+            
+            .sparkles {
+                font-size: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+            
+            .recipient {
+                font-size: 1.3em;
+                margin-bottom: 20px;
+            }
+            
+            .card {
+                padding: 30px 20px;
+                max-width: 90%;
+                border-radius: 20px;
+            }
+
+            .message {
+                font-size: 1em;
+                line-height: 1.7;
+                margin-bottom: 20px;
+            }
+
+            .icon {
+                font-size: 60px;
+                margin-bottom: 15px;
+            }
+
+            .decoration {
+                font-size: 30px;
+                margin: 15px 0;
+            }
+
+            .hearts {
+                font-size: 28px;
+                margin: 15px 0;
+            }
+
+            .memory-list {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+
+            .memory-list li {
+                font-size: 1em;
+                margin: 12px 0;
+                line-height: 1.6;
+            }
+
+            .signature {
+                font-size: 1.1em;
+                margin-top: 20px;
+            }
+
+            .music-control {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            .music-icon {
+                font-size: 20px;
+            }
+
+            .scroll-indicator {
+                font-size: 13px;
+                bottom: 20px;
+            }
+
+            .scroll-indicator::after {
+                font-size: 22px;
+                margin-top: 8px;
+            }
+
+            .page {
+                padding: 40px 15px;
+            }
+
+            .particle {
+                font-size: 16px;
+            }
+        }
+
+        /* Tablet optimization */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .welcome-text {
+                font-size: 3em;
+            }
+
+            .profile-photo {
+                width: 160px;
+                height: 160px;
+                font-size: 70px;
+            }
+
+            .card-profile {
+                width: 110px;
+                height: 110px;
+                font-size: 45px;
+            }
+
+            h1 {
+                font-size: 2.4em;
+            }
+
+            .recipient {
+                font-size: 1.7em;
+            }
+
+            .card {
+                max-width: 650px;
+                padding: 45px 35px;
+            }
+
+            .message {
+                font-size: 1.1em;
+            }
+
+            .icon {
+                font-size: 80px;
+            }
+        }
+
+        /* Large desktop optimization */
+        @media (min-width: 1440px) {
+            .card {
+                max-width: 850px;
+                padding: 60px 50px;
+            }
+
+            h1 {
+                font-size: 3em;
+            }
+
+            .recipient {
+                font-size: 2em;
+            }
+
+            .message {
+                font-size: 1.2em;
+            }
+
+            .icon {
+                font-size: 100px;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .welcome-text {
+                font-size: 1.8em;
+            }
+
+            .profile-photo {
+                width: 120px;
+                height: 120px;
+                font-size: 50px;
+            }
+
+            .card-profile {
+                width: 90px;
+                height: 90px;
+                font-size: 36px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .recipient {
+                font-size: 1.2em;
+            }
+
+            .card {
+                padding: 25px 18px;
+            }
+
+            .message {
+                font-size: 0.95em;
+            }
+
+            .memory-list li {
+                font-size: 0.95em;
+            }
+
+            .music-control {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .music-icon {
+                font-size: 18px;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .page {
+                padding: 30px 20px;
+            }
+
+            .card {
+                padding: 30px 25px;
+            }
+
+            .welcome-screen {
+                padding: 20px;
+            }
+
+            .profile-photo {
+                width: 100px;
+                height: 100px;
+                font-size: 45px;
+            }
+
+            .welcome-text {
+                font-size: 2em;
+                margin-top: 15px;
+            }
+
+            .icon {
+                font-size: 50px;
+                margin-bottom: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen">
+        <div class="sparkles" style="top: 20%; left: 20%;">✨</div>
+        <div class="sparkles" style="top: 30%; right: 20%; animation-delay: 0.5s;">⭐</div>
+        <div class="sparkles" style="bottom: 30%; left: 15%; animation-delay: 1s;">💫</div>
+        <div class="sparkles" style="bottom: 25%; right: 25%; animation-delay: 1.5s;">✨</div>
+        
+        <img src="https://i.ibb.co.com/BKHgv6bV/723904482-18404377084158114-6226581287366985276-n.jpg" alt="Kak Vava" class="profile-photo">
+        <div class="welcome-text">Hallo!</div>
+    </div>
+
+    <!-- Music Control -->
+    <div class="music-control" onclick="toggleMusic()">
+        <span class="music-icon" id="musicIcon">🎵</span>
+        <span id="musicText">Playing...</span>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="Taylor Swift - Love Story (Taylorâ__s Version) _ Lirik Terjemahan.mp3" type="">
+    </audio>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Page 1: Opening -->
+        <div class="page page1">
+            <div class="card">
+                <div class="icon">💌</div>
+                <h1>Pesan Spesial</h1>
+                <div class="recipient">Untuk Kak Aulia Evawani Larissa</div>
+                <div class="decoration">✨</div>
+                <div class="message">
+                    Hallo kak Vava, kamu apa kabarnya? Semoga senantiasa sehat selalu yaa kak 
+                    dan semoga mimpimu yang besar itu dapat terwujudkan aamiinn. 
+                    Jangan lupa senantiasa sholat dan berdoa yaa! 🤲
+                    <br><br>
+                    Tetap selalu menjadi orang yang ramah dan happy yaa kak, gak boleh sering-sering 
+                    cemberut wkwkwk 😄
+                    <br><br>
+                    Aku ada sesuatu yang ingin aku sampaikan kepadamu...
+                    <br><br>
+                    Scroll ke bawah yaa untuk melanjutkan 😊
+                </div>
+            </div>
+            <div class="scroll-indicator">Scroll untuk melanjutkan</div>
+        </div>
+
+        <!-- Page 2: Appreciation -->
+        <div class="page page2">
+            <div class="card">
+                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile">
+                <div class="icon">🌟</div>
+                <h1>Terima Kasih</h1>
+                <div class="message">
+                    Terima kasih banyak karena telah <strong>membimbing</strong> dan 
+                    <strong>berpartner</strong> dengan aku selama intern di
+                    <strong>IYG</strong> ini, maaf banget kalau selama ini aku banyak ngerepotin kamu dan masih banyak kekurangan di diriku yaa kak🥺🙏, semoga kamu bisa maafin (kalau enggak juga gapapa kok)
+                    <br><br>
+                    Aku pengen bilang kalau pengalaman bekerja sama denganmu itu sangat berharga bagiku!
+                </div>
+                <div class="hearts">❤️ 💜 💖</div>
+            </div>
+            <div class="scroll-indicator">Masih ada lagi...</div>
+        </div>
+
+        <!-- Page 3: Dedication -->
+        <div class="page page3">
+            <div class="card">
+                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile">
+                <div class="icon">🙏</div>
+                <h1>Dedikasi Luar Biasa</h1>
+                <div class="message">
+                    Terima kasih banyak atas <strong>dedikasinya yang luar biasa</strong>!
+                    <br><br>
+                    Bimbingan dan supportmu sangat berarti. Aku belajar banyak banget hal dari Kak Vava:
+                </div>
+                <ul class="memory-list">
+                    <li>🎨 Skill design yang amazing dan WOOWWW</li>
+                    <li>💡 Cara berpikir kreatif yang inspiring banget</li>
+                    <li>🤝 Kerja sama tim yang solid abiss selama ini</li>
+                    <li>✨ Profesionalisme yang patut dicontoh</li>
+                </ul>
+            </div>
+            <div class="scroll-indicator">Hampir selesai...</div>
+        </div>
+
+        <!-- Page 4: Memories -->
+        <div class="page page4">
+            <div class="card">
+                <div class="icon">📸</div>
+                <h1>Kenangan Bersama</h1>
+                <div class="message">
+                    Selama intern ini, banyak momen berharga yang gak akan aku lupakan huhuhuu!
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Pembelajaran</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Dedikasi</span>
+                    </div>
+                    <div class="stat-item
+                        <span class="stat-number">💯</span>
+                        <span class="stat-label">Team Work</span>
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    "Bekerja sama dengan Kak Vava adalah pengalaman yang luar biasa. 
+                    Setiap sesi bimbingan selalu penuh insight dan inspirasi!"
+                </div>
+
+                <div class="badges">
+                    <div class="badge">🌟 Mentor Terbaik</div>
+                    <div class="badge">💡 Inspiratif</div>
+                    <div class="badge">🎨 Creative Mind</div>
+                </div>
+            </div>
+            <div class="scroll-indicator">Lanjut lagi...</div>
+        </div>
+
+        <!-- Page 5: Journey Timeline -->
+        <div class="page page5">
+            <div class="card">
+                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile">
+                <div class="icon">🗓️</div>
+                <h1>Perjalanan Kita</h1>
+                <div class="message">
+                    Ini adalah timeline singkat perjalanan magang kita bersama:
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">🎯 Hari Pertama</div>
+                        <div class="timeline-content">
+                            Perkenalan dan onboarding. Kak Vava dan Kak Ghazy langsung welcome banget 
+                            dan bikin aku merasa nyaman di tim!
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">🚀 Minggu-minggu Awal</div>
+                        <div class="timeline-content">
+                            Belajar banyak tools dan teknik design. Guidance dari kalian berdua
+                            sangat membantu aku berkembang!
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">💪 Project Collaboration</div>
+                        <div class="timeline-content">
+                            Kerja bareng di project International Youth Goals. Di sini aku 
+                            belajar banyak tentang profesionalisme dan teamwork!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hearts">💖 ✨ 🌟</div>
+            </div>
+            <div class="scroll-indicator">Hampir selesai...</div>
+        </div>
+
+        <!-- Page 6: Gift & Closing -->
+        <div class="page page6">
+            <div class="card">
+                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile">
+                <div class="icon">🎁</div>
+                <h1>Hadiah Kecil</h1>
+                <div class="message">
+                    Aku ingin mengirimkan <strong>hadiah kecil</strong> ini kepadamu 
+                    sebagai bentuk apresiasi atas semua yang sudah kamu berikan.
+                    <br><br>
+                    Maaf kalau tidak banyak, semoga bermanfaat yaa! 🌟
+                    <br><br>
+                    Ini bukan sekadar hadiah material, tapi juga simbol dari rasa terima kasih 
+                    yang mendalam dari hatiku.
+                </div>
+
+                <div class="decoration">🎊 🎉 🎊</div>
+
+                <div class="message">
+                    <strong>Harapan untuk Masa Depan:</strong>
+                    <br><br>
+                    Semoga kita bisa tetap keep in touch dan saling support di masa depan! 
+                    Sukses selalu untuk Kak Vava, semoga karir dan mimpi-mimpinya tercapai. 
+                    <br><br>
+                    Dan yang paling penting, tetap jadi orang yang inspiring seperti sekarang yaa! 
+                    Keep shining! ✨
+                </div>
+
+                <div class="hearts">❤️ 💜 💙 💚 💛 🧡</div>
+
+                <div class="signature">
+                    Dengan penuh rasa hormat, terima kasih, dan doa terbaik<br>
+                    🙏💖
+                    <br><br>
+                    <strong>~ Your Intern Partner ~</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        const emojis = ['✨', '💖', '⭐', '💫', '🌟', '💝', '🎨', '🎉'];
+        
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            particlesContainer.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 8000);
+        }
+        
+        setInterval(createParticle, 800);
+
+        // Music control
+        const bgMusic = document.getElementById('bgMusic');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicText = document.getElementById('musicText');
+        let isPlaying = false;
+
+        // Auto play music after welcome screen
+        setTimeout(() => {
+            bgMusic.play().catch(e => console.log('Autoplay prevented'));
+            isPlaying = true;
+        }, 4500);
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.textContent = '🔇';
+                musicText.textContent = 'Paused';
+                isPlaying = false;
+            } else {
+                bgMusic.play();
+                musicIcon.textContent = '🎵';
+                musicText.textContent = 'Playing...';
+                isPlaying = true;
+            }
+        }
+
+        // Smooth scroll behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create more particles on page load
+            for (let i = 0; i < 8; i++) {
+                setTimeout(createParticle, i * 200);
+            }
+        });
+    </script>
+</body>
+</html>

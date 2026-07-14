@@ -32,6 +32,8 @@
 
         html {
             scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
@@ -39,9 +41,12 @@
             overflow-x: hidden;
             background: #0f0c29;
             color: #333;
+            /* Performance optimizations */
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeSpeed;
         }
 
-        /* Floating particles */
+        /* Floating particles - optimized */
         .particles {
             position: fixed;
             top: 0;
@@ -50,12 +55,14 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            will-change: contents;
         }
 
         .particle {
             position: absolute;
             font-size: 20px;
             animation: float 6s infinite ease-in-out;
+            will-change: transform, opacity;
         }
 
         @keyframes float {
@@ -75,12 +82,13 @@
             }
         }
 
-        /* Aurora background */
+        /* Aurora background - optimized */
         .aurora {
             position: absolute;
             inset: 0;
             overflow: hidden;
             pointer-events: none;
+            will-change: transform;
         }
 
         .aurora span {
@@ -91,6 +99,7 @@
             filter: blur(80px);
             opacity: 0.45;
             animation: auroraMove 12s ease-in-out infinite alternate;
+            will-change: transform;
         }
 
         .aurora span:nth-child(1) {
@@ -405,6 +414,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
+            will-change: transform;
         }
 
         .card::before {
@@ -947,11 +957,13 @@
         .card:hover {
             transform: translateY(-8px);
             box-shadow: 0 35px 90px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.6);
+            will-change: transform, box-shadow;
         }
 
         .card-profile:hover {
             transform: rotate(360deg) scale(1.1);
             transition: transform 0.8s;
+            will-change: transform;
         }
 
         /* Emoji reaction box */
@@ -2421,11 +2433,15 @@
     </div>
 
     <script>
-        // Create floating particles
+        /* Create floating particles - optimized */
         const particlesContainer = document.getElementById('particles');
         const emojis = ['✨', '💖', '⭐', '💫', '🌟', '💝', '🎨', '🎉', '🎂', '🎈', '🎁', '🎊'];
+        let particleCount = 0;
+        const maxParticles = 15; // Limit max particles for performance
         
         function createParticle() {
+            if (particleCount >= maxParticles) return;
+            
             const particle = document.createElement('div');
             particle.className = 'particle';
             particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -2433,17 +2449,25 @@
             particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
             particle.style.animationDelay = Math.random() * 2 + 's';
             particlesContainer.appendChild(particle);
+            particleCount++;
             
-            setTimeout(() => particle.remove(), 8000);
+            setTimeout(() => {
+                particle.remove();
+                particleCount--;
+            }, 8000);
         }
         
-        setInterval(createParticle, 800);
+        setInterval(createParticle, 1200); // Increased interval from 800ms
 
-        // Floating balloons
+        /* Floating balloons - optimized */
         const balloonColors = ['#ff6b9d', '#ffc371', '#667eea', '#43e97b', '#f5576c', '#4facfe', '#fee140'];
         const balloonsLayer = document.getElementById('balloonsLayer');
+        let balloonCount = 0;
+        const maxBalloons = 8; // Limit max balloons
 
         function createBalloon() {
+            if (balloonCount >= maxBalloons) return;
+            
             const balloon = document.createElement('div');
             balloon.className = 'balloon';
             balloon.style.left = Math.random() * 100 + '%';
@@ -2452,11 +2476,16 @@
             balloon.style.setProperty('--spin', (Math.random() * 30 - 15) + 'deg');
             balloon.style.animationDuration = (Math.random() * 6 + 8) + 's';
             balloonsLayer.appendChild(balloon);
-            setTimeout(() => balloon.remove(), 15000);
+            balloonCount++;
+            
+            setTimeout(() => {
+                balloon.remove();
+                balloonCount--;
+            }, 15000);
         }
 
-        setInterval(createBalloon, 2500);
-        for (let i = 0; i < 5; i++) setTimeout(createBalloon, i * 400);
+        setInterval(createBalloon, 3500); // Increased interval from 2500ms
+        for (let i = 0; i < 3; i++) setTimeout(createBalloon, i * 600); // Reduced from 5 to 3
 
         // Confetti burst
         const confettiColors = ['#ff6b9d', '#ffc371', '#667eea', '#43e97b', '#f5576c', '#fee140', '#4facfe'];
@@ -2521,7 +2550,7 @@
             }
         }
 
-        // Auto-trigger birthday effects when page scrolls into view
+        // Auto-trigger birthday effects when page scrolls into view - optimized
         let birthdayTriggered = false;
         const birthdayPage = document.getElementById('page-birthday');
 
@@ -2538,19 +2567,25 @@
             }
         }
 
-        window.addEventListener('scroll', checkBirthdayPage);
+        window.addEventListener('scroll', checkBirthdayPage, { passive: true });
 
-        // Card reveal on scroll
+        // Card reveal on scroll - optimized with throttle
+        let scrollTimeout;
         function revealCards() {
-            document.querySelectorAll('.card.reveal-card').forEach(card => {
-                const rect = card.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 80) {
-                    card.classList.add('visible');
-                }
-            });
+            if (scrollTimeout) return;
+            
+            scrollTimeout = setTimeout(() => {
+                scrollTimeout = null;
+                document.querySelectorAll('.card.reveal-card:not(.visible)').forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    if (rect.top < window.innerHeight - 80) {
+                        card.classList.add('visible');
+                    }
+                });
+            }, 100);
         }
 
-        window.addEventListener('scroll', revealCards);
+        window.addEventListener('scroll', revealCards, { passive: true });
 
         // Music control with better mobile handling
         const bgMusic = document.getElementById('bgMusic');
@@ -2688,51 +2723,69 @@
             }
         }
 
-        // Parallax effect on mouse move
+        /* Parallax effect on mouse move - optimized */
+        let mouseMoveTimeout;
         document.addEventListener('mousemove', function(e) {
-            const cards = document.querySelectorAll('.card:not(:hover)');
-            const moveX = (e.clientX - window.innerWidth / 2) / 60;
-            const moveY = (e.clientY - window.innerHeight / 2) / 60;
+            // Throttle mousemove for better performance
+            if (mouseMoveTimeout) return;
             
-            cards.forEach(card => {
-                card.style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
-            });
+            mouseMoveTimeout = setTimeout(() => {
+                mouseMoveTimeout = null;
+                const cards = document.querySelectorAll('.card:not(:hover)');
+                const moveX = (e.clientX - window.innerWidth / 2) / 80; // Reduced from 60
+                const moveY = (e.clientY - window.innerHeight / 2) / 80; // Reduced from 60
+                
+                cards.forEach(card => {
+                    card.style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
+                });
+            }, 50); // Throttle to every 50ms
         });
 
-        // Progress nav - highlight active section
+        // Progress nav - highlight active section - optimized
         const progressDots = document.querySelectorAll('.progress-dot');
+        let progressTimeout;
 
         function updateProgressNav() {
-            let current = 0;
-            const allPages = document.querySelectorAll('.page');
-            allPages.forEach((page, i) => {
-                const rect = page.getBoundingClientRect();
-                if (rect.top <= window.innerHeight / 2) current = i;
-            });
-            progressDots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === current);
-            });
+            if (progressTimeout) return;
+            
+            progressTimeout = setTimeout(() => {
+                progressTimeout = null;
+                let current = 0;
+                const allPages = document.querySelectorAll('.page');
+                allPages.forEach((page, i) => {
+                    const rect = page.getBoundingClientRect();
+                    if (rect.top <= window.innerHeight / 2) current = i;
+                });
+                progressDots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === current);
+                });
+            }, 100);
         }
 
-        window.addEventListener('scroll', updateProgressNav);
+        window.addEventListener('scroll', updateProgressNav, { passive: true });
         updateProgressNav();
 
-        // Scroll reveal animation
+        // Scroll reveal animation - optimized
+        let revealTimeout;
         function reveal() {
-            const reveals = document.querySelectorAll('.timeline-item, .badge, .stat-item');
+            if (revealTimeout) return;
             
-            for (let i = 0; i < reveals.length; i++) {
+            revealTimeout = setTimeout(() => {
+                revealTimeout = null;
+                const reveals = document.querySelectorAll('.timeline-item:not(.active), .badge:not(.active), .stat-item:not(.active)');
                 const windowHeight = window.innerHeight;
-                const elementTop = reveals[i].getBoundingClientRect().top;
                 const elementVisible = 150;
                 
-                if (elementTop < windowHeight - elementVisible) {
-                    reveals[i].classList.add('active');
+                for (let i = 0; i < reveals.length; i++) {
+                    const elementTop = reveals[i].getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveals[i].classList.add('active');
+                    }
                 }
-            }
+            }, 100);
         }
 
-        window.addEventListener('scroll', reveal);
+        window.addEventListener('scroll', reveal, { passive: true });
 
         // Smooth scroll behavior
         document.addEventListener('DOMContentLoaded', function() {

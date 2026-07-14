@@ -1380,153 +1380,374 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
             .progress-nav {
-                right: 12px;
-                gap: 10px;
+                right: 8px;
+                gap: 8px;
+                transform: translateY(-50%) scale(0.9);
+            }
+
+            .progress-dot {
+                width: 8px;
+                height: 8px;
+                border-width: 1.5px;
+            }
+
+            .progress-dot.active {
+                transform: scale(1.3);
             }
 
             .progress-dot::after {
                 display: none;
             }
 
+            /* Welcome screen mobile */
             .welcome-sub {
-                font-size: 0.85em;
+                font-size: 0.8em;
+                letter-spacing: 0.1em;
+                padding: 0 20px;
+                text-align: center;
             }
+
+            .birthday-badge-welcome {
+                font-size: 0.85em;
+                padding: 8px 18px;
+                margin-top: 16px;
+            }
+            
             .welcome-text {
-                font-size: 2em;
+                font-size: 1.9em;
                 margin-top: 20px;
             }
             
             .profile-photo {
-                width: 130px;
-                height: 130px;
+                width: 140px;
+                height: 140px;
             }
 
             .profile-ring {
                 padding: 4px;
             }
 
+            .profile-ring::before {
+                animation: ringSpin 3s linear infinite;
+            }
+
+            /* Card mobile optimization */
             .card-profile {
-                width: 100px;
-                height: 100px;
-                font-size: 40px;
-                border: 3px solid #667eea;
+                width: 90px;
+                height: 90px;
+                font-size: 36px;
+                border-width: 3px;
             }
             
             .sparkles {
-                font-size: 20px;
+                font-size: 18px;
             }
             
             h1 {
-                font-size: 1.8em;
-                margin-bottom: 15px;
+                font-size: 1.75em;
+                margin-bottom: 14px;
+                line-height: 1.2;
             }
             
             .recipient {
-                font-size: 1.3em;
-                margin-bottom: 20px;
+                font-size: 1.2em;
+                margin-bottom: 18px;
+                line-height: 1.3;
             }
             
             .card {
-                padding: 30px 20px;
-                max-width: 90%;
-                border-radius: 20px;
+                padding: 32px 20px;
+                max-width: 94%;
+                border-radius: 24px;
+                margin: 0 auto;
+            }
+
+            .card::before {
+                border-radius: calc(24px + 2px);
             }
 
             .message {
-                font-size: 1em;
-                line-height: 1.7;
+                font-size: 0.95em;
+                line-height: 1.75;
                 margin-bottom: 20px;
+                text-align: left;
             }
 
             .icon {
-                font-size: 60px;
-                margin-bottom: 15px;
+                font-size: 55px;
+                margin-bottom: 14px;
+            }
+
+            .icon-wave {
+                animation-duration: 2s;
             }
 
             .decoration {
-                font-size: 30px;
-                margin: 15px 0;
+                font-size: 28px;
+                margin: 14px 0;
             }
 
             .hearts {
-                font-size: 28px;
-                margin: 15px 0;
+                font-size: 26px;
+                margin: 18px 0;
             }
 
+            /* List mobile */
             .memory-list {
                 max-width: 100%;
-                padding: 0 10px;
+                padding: 0 5px;
             }
 
             .memory-list li {
-                font-size: 1em;
+                font-size: 0.95em;
+                margin: 10px 0;
+                padding: 12px 14px;
+                line-height: 1.6;
+                border-radius: 12px;
+                border-left-width: 3px;
+            }
+
+            /* Timeline mobile */
+            .timeline {
+                max-width: 100%;
+                margin: 24px 0;
+            }
+
+            .timeline-item {
+                padding: 16px 18px;
                 margin: 12px 0;
+                font-size: 0.95em;
+                border-radius: 14px;
+                border-left-width: 3px;
+            }
+
+            .timeline-date {
+                font-size: 0.85em;
+                margin-bottom: 6px;
+            }
+
+            .timeline-content {
+                font-size: 0.95em;
                 line-height: 1.6;
             }
 
-            .signature {
-                font-size: 1.1em;
-                margin-top: 20px;
+            /* Quote box mobile */
+            .quote-box {
+                padding: 24px 20px 24px 32px;
+                margin: 24px 0;
+                font-size: 1em;
+                border-radius: 16px;
+                line-height: 1.7;
             }
 
+            .quote-box::before {
+                font-size: 45px;
+                top: -8px;
+                left: 10px;
+            }
+
+            /* Stats mobile */
+            .stats {
+                margin: 24px 0;
+                gap: 16px;
+            }
+
+            .stat-item {
+                min-width: 80px;
+            }
+
+            .stat-number {
+                font-size: 2.5em;
+            }
+
+            .stat-label {
+                font-size: 0.9em;
+            }
+
+            /* Badges mobile */
+            .badges {
+                gap: 12px;
+                margin: 24px 0;
+            }
+
+            .badge {
+                padding: 12px 20px;
+                font-size: 0.9em;
+                border-radius: 40px;
+            }
+
+            /* Emoji reactions mobile */
+            .emoji-reactions {
+                gap: 10px;
+                margin: 20px 0;
+            }
+
+            .emoji-btn {
+                width: 54px;
+                height: 54px;
+                font-size: 28px;
+            }
+
+            .emoji-btn:hover {
+                transform: scale(1.2) rotate(10deg);
+            }
+
+            /* Interactive button mobile */
+            .interactive-btn {
+                padding: 14px 28px;
+                font-size: 1em;
+                margin: 18px 0;
+                border-radius: 40px;
+                white-space: normal;
+                line-height: 1.4;
+            }
+
+            /* Signature mobile */
+            .signature {
+                font-size: 1.05em;
+                margin-top: 24px;
+                padding-top: 20px;
+                line-height: 1.6;
+            }
+
+            /* Music control mobile */
             .music-control {
-                bottom: 15px;
-                right: 15px;
-                padding: 10px 18px;
-                font-size: 14px;
+                bottom: 14px;
+                right: 14px;
+                padding: 10px 16px;
+                font-size: 0.85em;
+                border-radius: 40px;
+                backdrop-filter: blur(12px);
             }
 
             .music-icon {
                 font-size: 20px;
             }
 
+            /* Scroll indicator mobile */
             .scroll-indicator {
-                font-size: 11px;
-                bottom: 20px;
-                padding-bottom: 40px;
+                font-size: 10px;
+                bottom: 18px;
+                padding-bottom: 38px;
+                letter-spacing: 0.06em;
             }
 
             .scroll-indicator::after {
                 width: 20px;
                 height: 32px;
+                border-width: 2px;
+            }
+
+            .scroll-indicator::before {
+                bottom: 24px;
+                width: 3px;
+                height: 6px;
             }
 
             .page {
-                padding: 40px 15px;
+                padding: 36px 12px;
+                min-height: 100vh;
+                min-height: 100dvh; /* Dynamic viewport height for mobile */
             }
 
+            /* Birthday page mobile */
             .birthday-number {
-                font-size: 5em;
+                font-size: 4.5em;
+            }
+
+            .birthday-number-wrap {
+                min-height: 100px;
+                margin: 8px 0 16px;
             }
 
             .birthday-cake {
-                font-size: 3.5em;
+                font-size: 3.2em;
+                margin-bottom: 8px;
             }
 
             .birthday-date-badge {
-                font-size: 0.9em;
-                padding: 10px 20px;
+                font-size: 0.85em;
+                padding: 10px 18px;
+                gap: 6px;
                 flex-wrap: wrap;
                 justify-content: center;
                 text-align: center;
+                margin: 16px 0;
+                border-radius: 40px;
             }
 
+            .birthday-wishes {
+                margin-top: 20px;
+            }
+
+            .birthday-wishes .wish-line {
+                font-size: 0.95em;
+                margin-bottom: 14px;
+                line-height: 1.7;
+            }
+
+            .birthday-sparkles {
+                font-size: 1.2em;
+            }
+
+            .star-orbit span {
+                font-size: 1.1em;
+            }
+
+            /* Balloons mobile */
+            .balloon {
+                width: 28px;
+                height: 36px;
+            }
+
+            .balloon::after {
+                height: 24px;
+            }
+
+            /* Aurora mobile */
+            .aurora span {
+                filter: blur(60px);
+                opacity: 0.35;
+            }
+
+            /* Particle mobile */
             .particle {
-                font-size: 16px;
+                font-size: 15px;
+            }
+
+            /* Floating heart mobile */
+            .floating-heart {
+                font-size: 24px;
+            }
+
+            /* Photo gallery mobile */
+            .photo-item {
+                width: 80px;
+                height: 80px;
+                border-radius: 12px;
+                border-width: 2px;
             }
         }
 
         /* Tablet optimization */
         @media (min-width: 769px) and (max-width: 1024px) {
             .welcome-text {
-                font-size: 3em;
+                font-size: 2.8em;
             }
 
             .profile-photo {
                 width: 160px;
                 height: 160px;
-                font-size: 70px;
             }
 
             .card-profile {
@@ -1536,24 +1757,33 @@
             }
 
             h1 {
-                font-size: 2.4em;
+                font-size: 2.3em;
             }
 
             .recipient {
-                font-size: 1.7em;
+                font-size: 1.65em;
             }
 
             .card {
-                max-width: 650px;
-                padding: 45px 35px;
+                max-width: 680px;
+                padding: 45px 36px;
             }
 
             .message {
-                font-size: 1.1em;
+                font-size: 1.08em;
+                line-height: 1.85;
             }
 
             .icon {
-                font-size: 80px;
+                font-size: 75px;
+            }
+
+            .birthday-number {
+                font-size: 6em;
+            }
+
+            .birthday-cake {
+                font-size: 4.2em;
             }
         }
 
@@ -1583,8 +1813,23 @@
 
         /* Small mobile devices */
         @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+
             .welcome-text {
-                font-size: 1.8em;
+                font-size: 1.7em;
+                line-height: 1.2;
+            }
+
+            .welcome-sub {
+                font-size: 0.75em;
+                padding: 0 16px;
+            }
+
+            .birthday-badge-welcome {
+                font-size: 0.8em;
+                padding: 7px 16px;
             }
 
             .profile-photo {
@@ -1593,77 +1838,266 @@
             }
 
             .card-profile {
-                width: 90px;
-                height: 90px;
-                font-size: 36px;
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
             }
 
             h1 {
                 font-size: 1.6em;
+                margin-bottom: 12px;
             }
 
             .recipient {
-                font-size: 1.2em;
+                font-size: 1.15em;
+                margin-bottom: 16px;
             }
 
             .card {
-                padding: 25px 18px;
+                padding: 28px 18px;
+                max-width: 96%;
             }
 
             .message {
-                font-size: 0.95em;
+                font-size: 0.92em;
+                line-height: 1.7;
+            }
+
+            .icon {
+                font-size: 48px;
             }
 
             .memory-list li {
+                font-size: 0.9em;
+                padding: 11px 13px;
+            }
+
+            .timeline-item {
+                padding: 14px 16px;
+                font-size: 0.9em;
+            }
+
+            .quote-box {
+                font-size: 0.95em;
+                padding: 20px 18px 20px 28px;
+            }
+
+            .quote-box::before {
+                font-size: 40px;
+            }
+
+            .stat-number {
+                font-size: 2.2em;
+            }
+
+            .stat-label {
+                font-size: 0.85em;
+            }
+
+            .badge {
+                padding: 10px 18px;
+                font-size: 0.85em;
+            }
+
+            .emoji-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+            }
+
+            .interactive-btn {
+                padding: 12px 24px;
                 font-size: 0.95em;
             }
 
+            .signature {
+                font-size: 1em;
+            }
+
             .music-control {
-                padding: 8px 15px;
-                font-size: 12px;
+                padding: 9px 14px;
+                font-size: 0.8em;
+                bottom: 12px;
+                right: 12px;
             }
 
             .music-icon {
                 font-size: 18px;
+            }
+
+            .birthday-number {
+                font-size: 4em;
+            }
+
+            .birthday-cake {
+                font-size: 2.8em;
+            }
+
+            .birthday-date-badge {
+                font-size: 0.8em;
+                padding: 9px 16px;
+            }
+
+            .birthday-wishes .wish-line {
+                font-size: 0.9em;
+                margin-bottom: 12px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 360px) {
+            html {
+                font-size: 13px;
+            }
+
+            .card {
+                padding: 24px 16px;
+            }
+
+            .welcome-text {
+                font-size: 1.6em;
+            }
+
+            .profile-photo {
+                width: 110px;
+                height: 110px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .birthday-number {
+                font-size: 3.5em;
             }
         }
 
         /* Landscape mobile */
         @media (max-height: 600px) and (orientation: landscape) {
             .page {
-                padding: 30px 20px;
+                padding: 24px 20px;
+                min-height: auto;
             }
 
             .card {
-                padding: 30px 25px;
+                padding: 24px 28px;
+                margin: 20px auto;
             }
 
             .welcome-screen {
-                padding: 20px;
+                padding: 16px;
             }
 
             .profile-photo {
-                width: 100px;
-                height: 100px;
+                width: 90px;
+                height: 90px;
+            }
+
+            .profile-ring {
+                padding: 3px;
             }
 
             .welcome-text {
-                font-size: 2em;
-                margin-top: 15px;
+                font-size: 1.8em;
+                margin-top: 12px;
+            }
+
+            .welcome-sub {
+                font-size: 0.75em;
+                margin-top: 8px;
+            }
+
+            .birthday-badge-welcome {
+                font-size: 0.8em;
+                padding: 6px 14px;
+                margin-top: 12px;
             }
 
             .icon {
-                font-size: 50px;
-                margin-bottom: 10px;
+                font-size: 42px;
+                margin-bottom: 8px;
             }
 
             h1 {
-                font-size: 1.8em;
+                font-size: 1.6em;
                 margin-bottom: 10px;
+            }
+
+            .recipient {
+                font-size: 1.2em;
+                margin-bottom: 12px;
+            }
+
+            .message {
+                font-size: 0.9em;
+                margin-bottom: 16px;
+            }
+
+            .birthday-number {
+                font-size: 3.5em;
+            }
+
+            .birthday-number-wrap {
+                min-height: 80px;
+            }
+
+            .birthday-cake {
+                font-size: 2.5em;
             }
 
             .scroll-indicator {
                 display: none;
+            }
+
+            .aurora span {
+                filter: blur(50px);
+            }
+        }
+
+        /* iOS specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .card {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+
+            .music-control {
+                -webkit-backdrop-filter: blur(16px);
+            }
+
+            input, textarea, select {
+                font-size: 16px !important; /* Prevent iOS zoom on focus */
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .card:hover {
+                transform: translateY(0);
+            }
+
+            .emoji-btn:hover,
+            .badge:hover,
+            .memory-list li:hover,
+            .timeline-item:hover {
+                transform: none;
+            }
+
+            .tooltip .tooltiptext {
+                display: none;
+            }
+
+            /* Larger touch targets */
+            .emoji-btn,
+            .badge,
+            .interactive-btn,
+            .music-control,
+            .progress-dot {
+                min-height: 44px; /* iOS recommended touch target */
             }
         }
     </style>
@@ -1711,8 +2145,10 @@
     </div>
 
     <!-- Audio Element -->
-    <audio id="bgMusic" loop>
-        <source src="Taylor Swift - Love Story (Taylorâ__s Version) _ Lirik Terjemahan.mp3" type="">
+    <audio id="bgMusic" loop preload="auto">
+        <source src="The 1975 - About You.mp3" type="audio/mpeg">
+        <!-- Fallback: jika ingin gunakan musik sendiri, upload file MP3 ke folder yang sama dan uncomment baris di bawah -->
+        <!-- <source src="./music.mp3" type="audio/mpeg"> -->
     </audio>
 
     <!-- Main Content -->
@@ -1774,7 +2210,7 @@
                     <p class="wish-line">Semoga di usia yang baru ini, hidupmu semakin penuh berkah, kebahagiaan, dan keberhasilan.</p>
                     <p class="wish-line">Semoga semua impian dan cita-citamu tercapai, karirmu semakin gemilang, dan selalu dikelilingi orang-orang yang sayang padamu.</p>
                     <p class="wish-line">Terima kasih sudah jadi mentor, partner, dan inspirasi yang luar biasa selama intern ini. Kamu benar-benar orang spesial! 💖</p>
-                    <p class="wish-line">Nikmati hari spesialmu yaa kak — semoga tahun ini jadi tahun terbaikmu! 🥳🎁✨</p>
+                    <p class="wish-line">Nikmati hari spesialmu yaa kak, semoga tahun ini jadi tahun terbaikmu! 🥳🎁✨</p>
                 </div>
 
                 <div class="hearts">🎈 🎂 🎁 🎊 🎉</div>
@@ -2116,29 +2552,68 @@
 
         window.addEventListener('scroll', revealCards);
 
-        // Music control
+        // Music control with better mobile handling
         const bgMusic = document.getElementById('bgMusic');
         const musicIcon = document.getElementById('musicIcon');
         const musicText = document.getElementById('musicText');
         let isPlaying = false;
+        let userInteracted = false;
 
-        // Auto play music after welcome screen
+        // Enable audio after user interaction (required by mobile browsers)
+        function enableAudio() {
+            if (!userInteracted) {
+                userInteracted = true;
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    musicIcon.textContent = '🎵';
+                    musicText.textContent = 'Playing...';
+                }).catch(e => {
+                    console.log('Autoplay prevented, waiting for user interaction');
+                    isPlaying = false;
+                    musicIcon.textContent = '🔇';
+                    musicText.textContent = 'Tap to Play';
+                });
+            }
+        }
+
+        // Try to play after welcome screen, but respect browser policies
         setTimeout(() => {
-            bgMusic.play().catch(e => console.log('Autoplay prevented'));
-            isPlaying = true;
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                userInteracted = true;
+            }).catch(e => {
+                console.log('Autoplay prevented');
+                musicIcon.textContent = '🔇';
+                musicText.textContent = 'Tap to Play';
+            });
         }, 4500);
 
+        // Enable audio on first touch/click
+        ['click', 'touchstart'].forEach(evt => {
+            document.addEventListener(evt, enableAudio, { once: true });
+        });
+
         function toggleMusic() {
+            if (!userInteracted) {
+                enableAudio();
+                return;
+            }
+
             if (isPlaying) {
                 bgMusic.pause();
                 musicIcon.textContent = '🔇';
                 musicText.textContent = 'Paused';
                 isPlaying = false;
             } else {
-                bgMusic.play();
-                musicIcon.textContent = '🎵';
-                musicText.textContent = 'Playing...';
-                isPlaying = true;
+                bgMusic.play().then(() => {
+                    musicIcon.textContent = '🎵';
+                    musicText.textContent = 'Playing...';
+                    isPlaying = true;
+                }).catch(e => {
+                    console.error('Play failed:', e);
+                    musicIcon.textContent = '🔇';
+                    musicText.textContent = 'Tap to Play';
+                });
             }
         }
 

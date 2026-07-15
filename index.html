@@ -1390,6 +1390,161 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
+        /* ===== 3D & Parallax Enhancements ===== */
+
+        /* Card cursor-tilt (driven by JS on desktop) */
+        .card {
+            transform-style: preserve-3d;
+        }
+
+        /* Floating 3D profile photo */
+        .card-profile.photo-3d {
+            transform-style: preserve-3d;
+            animation: photoFloat3D 6s ease-in-out infinite;
+        }
+
+        @keyframes photoFloat3D {
+            0%, 100% { transform: perspective(800px) rotateY(-6deg) rotateX(2deg) translateZ(0); }
+            50% { transform: perspective(800px) rotateY(6deg) rotateX(-2deg) translateZ(18px); }
+        }
+
+        .card-profile.photo-3d:hover {
+            animation-play-state: paused;
+            transform: perspective(800px) rotateY(0deg) rotateX(0deg) scale(1.12) translateZ(30px);
+            transition: transform 0.5s ease;
+        }
+
+        /* 3D flip photo gallery */
+        .gallery-3d {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin: 28px 0;
+            perspective: 1200px;
+        }
+
+        .gallery-frame {
+            width: 130px;
+            height: 130px;
+            position: relative;
+        }
+
+        .gallery-frame-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            animation: photoFloat 3.5s ease-in-out infinite;
+        }
+
+        .gallery-frame:hover .gallery-frame-inner {
+            transform: rotateY(180deg);
+            animation-play-state: paused;
+        }
+
+        .gallery-frame-face {
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-size: 0.78em;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            line-height: 1.4;
+        }
+
+        .gallery-frame-front {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        }
+
+        .gallery-frame-back {
+            background: linear-gradient(135deg, var(--accent-3), var(--accent-4));
+            transform: rotateY(180deg);
+        }
+
+        .gallery-frame-front .emoji-big {
+            font-size: 2.2em;
+            margin-bottom: 6px;
+        }
+
+        .gallery-frame:nth-child(1) .gallery-frame-inner { animation-delay: 0s; }
+        .gallery-frame:nth-child(2) .gallery-frame-inner { animation-delay: 0.4s; }
+        .gallery-frame:nth-child(3) .gallery-frame-inner { animation-delay: 0.8s; }
+        .gallery-frame:nth-child(4) .gallery-frame-inner { animation-delay: 1.2s; }
+
+        .gallery-caption {
+            font-size: 0.95em;
+            color: #666;
+            margin-top: -12px;
+            margin-bottom: 18px;
+        }
+
+        /* Momen Berharga — embrace animation */
+        .embrace-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0 22px;
+            perspective: 600px;
+        }
+
+        .embrace-icon {
+            font-size: 2.6em;
+            display: inline-block;
+        }
+
+        .embrace-icon.left { animation: embraceMeetLeft 3s ease-in-out infinite; }
+        .embrace-icon.right { animation: embraceMeetRight 3s ease-in-out infinite; }
+
+        @keyframes embraceMeetLeft {
+            0%, 100% { transform: translateX(-14px) rotate(-8deg) translateZ(0); }
+            50% { transform: translateX(0) rotate(0deg) translateZ(25px); }
+        }
+
+        @keyframes embraceMeetRight {
+            0%, 100% { transform: translateX(14px) rotate(8deg) translateZ(0); }
+            50% { transform: translateX(0) rotate(0deg) translateZ(25px); }
+        }
+
+        .moment-highlight {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(79, 172, 254, 0.08));
+            border-left: 4px solid #4facfe;
+            border-radius: 20px;
+            padding: 24px 30px;
+            margin: 26px 0;
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.2em;
+            color: #333;
+            box-shadow: inset 0 0 30px rgba(79, 172, 254, 0.06);
+            animation: scaleIn 0.8s ease-out;
+        }
+
+        .page-moment .recipient { color: #4facfe; }
+
+        .timeline-item:nth-child(4) { animation-delay: 0.8s; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card-profile.photo-3d,
+            .gallery-frame-inner,
+            .embrace-icon {
+                animation: none !important;
+            }
+            .card {
+                transition: none !important;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             html {
@@ -2145,6 +2300,7 @@
         <a class="progress-dot" href="#page-birthday" data-label="Ulang Tahun"></a>
         <a class="progress-dot" href="#page2" data-label="Terima Kasih"></a>
         <a class="progress-dot" href="#page3" data-label="Dedikasi"></a>
+        <a class="progress-dot" href="#page-moment" data-label="Momen Berharga"></a>
         <a class="progress-dot" href="#page4" data-label="Kenangan"></a>
         <a class="progress-dot" href="#page5" data-label="Perjalanan"></a>
         <a class="progress-dot" href="#page6" data-label="Hadiah"></a>
@@ -2238,7 +2394,7 @@
         <div class="page page2" id="page2">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile">
+                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile photo-3d">
                 <div class="icon icon-wave">🌟</div>
                 <h1>Terima Kasih</h1>
                 <div class="message">
@@ -2281,7 +2437,7 @@
         <div class="page page3" id="page3">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile">
+                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile photo-3d">
                 <div class="icon icon-wave">🙏</div>
                 <h1>Dedikasi Luar Biasa</h1>
                 <div class="message">
@@ -2297,6 +2453,46 @@
                 </ul>
             </div>
             <div class="scroll-indicator">Hampir selesai...</div>
+        </div>
+
+        <!-- Page Moment: Momen Berharga -->
+        <div class="page page-moment" id="page-moment">
+            <div class="aurora"><span></span><span></span><span></span></div>
+            <div class="card reveal-card moment-card">
+                <div class="icon icon-wave">🫂</div>
+                <h1>Momen yang Paling Berharga</h1>
+                <div class="recipient">Untuk Kak Vava, dengan tulus</div>
+
+                <div class="embrace-wrap">
+                    <span class="embrace-icon left">🤍</span>
+                    <span class="embrace-icon right">🤍</span>
+                </div>
+
+                <div class="message">
+                    Dari semua momen selama intern ini, ada satu momen yang paling membekas dan gak akan 
+                    pernah aku lupakan.
+                    <br><br>
+                    Waktu itu aku sempat sakit <strong>TBC</strong>, dan itu jadi salah satu masa paling berat 
+                    yang pernah aku lalui. Tapi di tengah semua itu, kakak adalah salah satu orang yang mau 
+                    mengulurkan tangan dan bantu aku sebisa kakak, tanpa banyak tanya, tanpa ragu.
+                </div>
+
+                <div class="moment-highlight">
+                    "Saling bekerja sama dan saling merangkul, walau apapun yang terjadi."
+                </div>
+
+                <div class="message">
+                    Buat aku, itu bukan sekadar bantuan kecil, kak. Itu bukti bahwa kerja sama yang sesungguhnya 
+                    bukan cuma soal project atau deadline, tapi soal ada satu sama lain di saat yang paling 
+                    dibutuhkan.
+                    <br><br>
+                    Terima kasih banyak, Kak Vava. Kebaikan hati dan kepedulian kakak di momen itu sangat amat 
+                    berharga buatku, dan akan selalu aku syukuri. 🤍
+                </div>
+
+                <div class="hearts">🤍 🫂 💫</div>
+            </div>
+            <div class="scroll-indicator">Lanjut ke kenangan lainnya...</div>
         </div>
 
         <!-- Page 4: Memories -->
@@ -2329,6 +2525,37 @@
                     Setiap sesi bimbingan selalu penuh insight dan inspirasi!"
                 </div>
 
+                <div class="message" style="margin-top: 10px;">
+                    📸 Galeri kenangan <em>(placeholder — nanti diganti foto kita berdua yaa!)</em>
+                </div>
+                <div class="gallery-3d">
+                    <div class="gallery-frame">
+                        <div class="gallery-frame-inner">
+                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🎯</span>Hari Pertama</div>
+                            <div class="gallery-frame-face gallery-frame-back">Onboarding bareng!</div>
+                        </div>
+                    </div>
+                    <div class="gallery-frame">
+                        <div class="gallery-frame-inner">
+                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🎨</span>Project Time</div>
+                            <div class="gallery-frame-face gallery-frame-back">Ngerjain project bareng</div>
+                        </div>
+                    </div>
+                    <div class="gallery-frame">
+                        <div class="gallery-frame-inner">
+                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🤍</span>Saling Bantu</div>
+                            <div class="gallery-frame-face gallery-frame-back">Selalu ada satu sama lain</div>
+                        </div>
+                    </div>
+                    <div class="gallery-frame">
+                        <div class="gallery-frame-inner">
+                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🎉</span>Hari Terakhir</div>
+                            <div class="gallery-frame-face gallery-frame-back">Perpisahan yang berkesan</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-caption">💡 Arahkan kursor / sentuh foto untuk membalik kartu</div>
+
                 <div class="badges">
                     <div class="badge tooltip" onclick="celebrateBadge(this)">
                         🌟 Mentor Terbaik
@@ -2355,7 +2582,7 @@
         <div class="page page5" id="page5">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile">
+                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile photo-3d">
                 <div class="icon icon-wave">🗓️</div>
                 <h1>Perjalanan Kita</h1>
                 <div class="message">
@@ -2384,6 +2611,13 @@
                             belajar banyak tentang profesionalisme dan teamwork!
                         </div>
                     </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">🤍 Saat yang Berat</div>
+                        <div class="timeline-content">
+                            Di satu titik aku sempat jatuh sakit, dan kakak jadi salah satu orang yang 
+                            paling bantu aku waktu itu. Momen itu ngajarin aku arti kerja sama yang sesungguhnya.
+                        </div>
+                    </div>
                 </div>
 
                 <div class="hearts">💖 ✨ 🌟</div>
@@ -2395,7 +2629,7 @@
         <div class="page page6" id="page6">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile">
+                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile photo-3d">
                 <div class="icon icon-wave">🎁</div>
                 <h1>Hadiah Kecil</h1>
                 <div class="message">
@@ -2699,11 +2933,11 @@
         // Surprise button
         function showSurprise() {
             const messages = [
-                '💖 Kamu luar biasa, Kak Vava!',
-                '🌟 Thank you for everything!',
-                '✨ You\'re the best mentor!',
-                '🎨 Keep being amazing!',
-                '💫 Terima kasih banyak!'
+                '💖 Kamu luar biasa, udah bisa sabar menjalani ini semua dan melangkah sejauh ini, teruslah berkembang!',
+                '🌟 So proud of you!',
+                '✨ You\'re the best mentor, jyujur!',
+                '🎨 Keep being amazing kak, terus jadi orang keren yaa!',
+                '💫 Terima kasih banyak pokoknya huaaaaaa😭🤩!'
             ];
             
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -2740,6 +2974,50 @@
                 });
             }, 50); // Throttle to every 50ms
         });
+
+        /* 3D cursor-tilt on cards (desktop only, respects reduced motion) */
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const supportsFineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+        if (!prefersReducedMotion && supportsFineHover) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mousemove', function(e) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const rotateX = ((y - rect.height / 2) / rect.height) * -8;
+                    const rotateY = ((x - rect.width / 2) / rect.width) * 8;
+                    card.style.transform = `perspective(1400px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.015)`;
+                });
+                card.addEventListener('mouseleave', function() {
+                    card.style.transform = '';
+                });
+            });
+        }
+
+        /* Parallax depth on aurora background per page - optimized with rAF */
+        const auroraLayers = document.querySelectorAll('.page > .aurora');
+        let auroraTicking = false;
+
+        function updateAuroraParallax() {
+            auroraTicking = false;
+            const vh = window.innerHeight;
+            auroraLayers.forEach(layer => {
+                const rect = layer.getBoundingClientRect();
+                const progress = (rect.top + rect.height / 2 - vh / 2) / vh;
+                layer.style.transform = `translateY(${progress * 40}px)`;
+            });
+        }
+
+        if (!prefersReducedMotion) {
+            window.addEventListener('scroll', function() {
+                if (!auroraTicking) {
+                    requestAnimationFrame(updateAuroraParallax);
+                    auroraTicking = true;
+                }
+            }, { passive: true });
+            updateAuroraParallax();
+        }
 
         // Progress nav - highlight active section - optimized
         const progressDots = document.querySelectorAll('.progress-dot');

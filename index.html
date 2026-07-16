@@ -96,7 +96,7 @@
             width: 150%;
             height: 150%;
             border-radius: 50%;
-            filter: blur(80px);
+            filter: blur(60px);
             opacity: 0.45;
             animation: auroraMove 12s ease-in-out infinite alternate;
             will-change: transform;
@@ -139,6 +139,9 @@
             flex-direction: column;
             gap: 12px;
             opacity: 0;
+        }
+
+        body.unlocked .progress-nav {
             animation: showContent 1s ease-in 5s forwards;
         }
 
@@ -183,6 +186,149 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
         }
 
+        /* ===== Password Lock Screen ===== */
+        html.locked, body.locked {
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .lock-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 20px;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .lock-screen.is-unlocked {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .lock-card {
+            position: relative;
+            z-index: 2;
+            max-width: 420px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-glow);
+            padding: 48px 36px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: cardSlideUp 0.8s ease-out;
+        }
+
+        .lock-icon {
+            font-size: 3.2em;
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: iconWave 2.5s ease-in-out infinite;
+        }
+
+        .lock-card h1 {
+            font-size: 1.9em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .lock-sub {
+            color: #555;
+            font-size: 0.98em;
+            line-height: 1.6;
+            margin-bottom: 26px;
+        }
+
+        .lock-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .lock-input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 2px solid rgba(102, 126, 234, 0.25);
+            font-family: var(--font-body);
+            font-size: 1.05em;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .lock-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+
+        .lock-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 22px;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.02em;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.35);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .lock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(102, 126, 234, 0.45);
+        }
+
+        .lock-btn:active {
+            transform: translateY(0);
+        }
+
+        .lock-error {
+            min-height: 20px;
+            color: #f5576c;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        /* ===== Performance: pause heavy animations on off-screen pages ===== */
+        .page:not(.in-view) .aurora span,
+        .page:not(.in-view) .icon-wave,
+        .page:not(.in-view) .decoration,
+        .page:not(.in-view) .hearts,
+        .page:not(.in-view) .badge,
+        .page:not(.in-view) .star-orbit,
+        .page:not(.in-view) .star-orbit span,
+        .page:not(.in-view) .card-profile.photo-3d,
+        .page:not(.in-view) .gallery-frame-inner,
+        .page:not(.in-view) .embrace-icon {
+            animation-play-state: paused;
+        }
+
+        .page:not(.in-view) .aurora span {
+            will-change: auto;
+        }
+
+        .page.in-view .aurora span {
+            will-change: transform;
+        }
+
+        /* Skip layout/paint work for offscreen pages */
+        .page {
+            content-visibility: auto;
+            contain-intrinsic-size: 900px 1100px;
+        }
+
         /* Welcome Screen */
         .welcome-screen {
             position: fixed;
@@ -196,8 +342,11 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            animation: fadeOut 1s ease-in 4s forwards;
             overflow: hidden;
+        }
+
+        body.unlocked .welcome-screen {
+            animation: fadeOut 1s ease-in 4s forwards;
         }
 
         @keyframes fadeOut {
@@ -351,9 +500,12 @@
         /* Main Content */
         .main-content {
             opacity: 0;
-            animation: showContent 1s ease-in 4.5s forwards;
             position: relative;
             z-index: 2;
+        }
+
+        body.unlocked .main-content {
+            animation: showContent 1s ease-in 4.5s forwards;
         }
 
         @keyframes showContent {
@@ -2270,6 +2422,29 @@
     </style>
 </head>
 <body>
+    <!-- Password Lock Screen -->
+    <div class="lock-screen" id="lockScreen">
+        <div class="lock-card">
+            <div class="lock-icon">🔒</div>
+            <h1>Akses Terkunci</h1>
+            <div class="lock-sub">
+                Pesan spesial ini dikunci ya kak.<br>Masukkan password untuk membukanya 🔑
+            </div>
+            <form class="lock-form" id="lockForm" autocomplete="off">
+                <input
+                    type="password"
+                    class="lock-input"
+                    id="passwordInput"
+                    placeholder="Masukkan password..."
+                    autocomplete="off"
+                    aria-label="Password"
+                >
+                <button type="submit" class="lock-btn" id="unlockBtn">Buka 🔓</button>
+                <div class="lock-error" id="lockError"></div>
+            </form>
+        </div>
+    </div>
+
     <!-- Floating Particles -->
     <div class="particles" id="particles"></div>
 
@@ -2691,7 +2866,7 @@
             }, 8000);
         }
         
-        setInterval(createParticle, 1200); // Increased interval from 800ms
+        // Particle interval is started from startExperience() after unlock
 
         /* Floating balloons - optimized */
         const balloonColors = ['#ff6b9d', '#ffc371', '#667eea', '#43e97b', '#f5576c', '#4facfe', '#fee140'];
@@ -2718,14 +2893,27 @@
             }, 15000);
         }
 
-        setInterval(createBalloon, 3500); // Increased interval from 2500ms
-        for (let i = 0; i < 3; i++) setTimeout(createBalloon, i * 600); // Reduced from 5 to 3
+        // Balloon interval + initial balloons are started from startExperience() after unlock
 
-        // Confetti burst
+        // Confetti burst (rate-limited to prevent lag)
         const confettiColors = ['#ff6b9d', '#ffc371', '#667eea', '#43e97b', '#f5576c', '#fee140', '#4facfe'];
+        let confettiSpawned = 0;
+        const confettiSpawnLimit = 180; // max active confetti per session-ish
+        const confettiCooldownMs = 1200;
+        let lastConfettiAt = 0;
 
         function createConfetti(count = 60, originX = null) {
-            for (let i = 0; i < count; i++) {
+            const now = performance.now();
+            if (now - lastConfettiAt < confettiCooldownMs) return;
+            lastConfettiAt = now;
+
+            const allowed = Math.max(0, confettiSpawnLimit - confettiSpawned);
+            if (allowed <= 0) return;
+
+            const realCount = Math.min(count, allowed);
+            confettiSpawned += realCount;
+
+            for (let i = 0; i < realCount; i++) {
                 setTimeout(() => {
                     const piece = document.createElement('div');
                     piece.className = 'confetti-piece';
@@ -2736,10 +2924,14 @@
                     piece.style.height = (Math.random() * 8 + 6) + 'px';
                     piece.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
                     document.body.appendChild(piece);
-                    setTimeout(() => piece.remove(), 5000);
-                }, i * 30);
+                    setTimeout(() => {
+                        piece.remove();
+                        confettiSpawned = Math.max(0, confettiSpawned - 1);
+                    }, 5000);
+                }, i * 18);
             }
         }
+
 
         // Fireworks
         const fireworksLayer = document.getElementById('fireworksLayer');
@@ -2788,38 +2980,68 @@
         let birthdayTriggered = false;
         const birthdayPage = document.getElementById('page-birthday');
 
-        function checkBirthdayPage() {
-            if (birthdayTriggered || !birthdayPage) return;
-            const rect = birthdayPage.getBoundingClientRect();
-            if (rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.2) {
-                birthdayTriggered = true;
-                createConfetti(50);
-                fireworkShow(6);
-                document.querySelectorAll('.wish-line').forEach((line, i) => {
-                    setTimeout(() => line.classList.add('visible'), i * 400);
-                });
-            }
+        function triggerBirthdayEffects() {
+            if (birthdayTriggered) return;
+            birthdayTriggered = true;
+            createConfetti(50);
+            fireworkShow(6);
+            document.querySelectorAll('.wish-line').forEach((line, i) => {
+                setTimeout(() => line.classList.add('visible'), i * 400);
+            });
         }
 
-        window.addEventListener('scroll', checkBirthdayPage, { passive: true });
+        if (birthdayPage && 'IntersectionObserver' in window) {
+            const birthdayObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) triggerBirthdayEffects();
+                });
+            }, { rootMargin: '0px 0px -40% 0px', threshold: 0.01 });
+            birthdayObserver.observe(birthdayPage);
+        } else {
+            // fallback: old scroll detection (kept only for environments without IO)
+            function checkBirthdayPage() {
+                if (birthdayTriggered || !birthdayPage) return;
+                const rect = birthdayPage.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.2) {
+                    triggerBirthdayEffects();
+                }
+            }
+            window.addEventListener('scroll', checkBirthdayPage, { passive: true });
+        }
 
-        // Card reveal on scroll - optimized with throttle
-        let scrollTimeout;
-        function revealCards() {
-            if (scrollTimeout) return;
-            
-            scrollTimeout = setTimeout(() => {
-                scrollTimeout = null;
-                document.querySelectorAll('.card.reveal-card:not(.visible)').forEach(card => {
-                    const rect = card.getBoundingClientRect();
-                    if (rect.top < window.innerHeight - 80) {
-                        card.classList.add('visible');
+        // Card reveal (IntersectionObserver only, avoids scroll listener jank)
+        const revealCardsEls = document.querySelectorAll('.card.reveal-card');
+        if ('IntersectionObserver' in window) {
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
                     }
                 });
-            }, 100);
+            }, { rootMargin: '0px 0px -20% 0px', threshold: 0.01 });
+
+            revealCardsEls.forEach(el => {
+                if (!el.classList.contains('visible')) revealObserver.observe(el);
+            });
+        } else {
+            // If IO is not supported, keep last-resort behaviour.
+            // (This project targets modern browsers, so this path is rarely used.)
+            let scrollTimeout;
+            function revealCards() {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(() => {
+                    scrollTimeout = null;
+                    document.querySelectorAll('.card.reveal-card:not(.visible)').forEach(card => {
+                        const rect = card.getBoundingClientRect();
+                        if (rect.top < window.innerHeight - 80) card.classList.add('visible');
+                    });
+                }, 120);
+            }
+            window.addEventListener('scroll', revealCards, { passive: true });
         }
 
-        window.addEventListener('scroll', revealCards, { passive: true });
+
 
         // Music control with better mobile handling
         const bgMusic = document.getElementById('bgMusic');
@@ -2845,22 +3067,7 @@
             }
         }
 
-        // Try to play after welcome screen, but respect browser policies
-        setTimeout(() => {
-            bgMusic.play().then(() => {
-                isPlaying = true;
-                userInteracted = true;
-            }).catch(e => {
-                console.log('Autoplay prevented');
-                musicIcon.textContent = '🔇';
-                musicText.textContent = 'Tap to Play';
-            });
-        }, 4500);
-
-        // Enable audio on first touch/click
-        ['click', 'touchstart'].forEach(evt => {
-            document.addEventListener(evt, enableAudio, { once: true });
-        });
+        // Music autoplay attempt + click/touch fallback are started from startExperience() after unlock
 
         function toggleMusic() {
             if (!userInteracted) {
@@ -2995,91 +3202,113 @@
             });
         }
 
-        /* Parallax depth on aurora background per page - optimized with rAF */
-        const auroraLayers = document.querySelectorAll('.page > .aurora');
-        let auroraTicking = false;
+        /* Parallax depth on aurora background per page (disabled for scroll performance) */
+        // sebelumnya memakai scroll listener + getBoundingClientRect.
+        // Sekarang dinonaktifkan agar scroll lebih smooth.
 
-        function updateAuroraParallax() {
-            auroraTicking = false;
-            const vh = window.innerHeight;
-            auroraLayers.forEach(layer => {
-                const rect = layer.getBoundingClientRect();
-                const progress = (rect.top + rect.height / 2 - vh / 2) / vh;
-                layer.style.transform = `translateY(${progress * 40}px)`;
-            });
-        }
-
-        if (!prefersReducedMotion) {
-            window.addEventListener('scroll', function() {
-                if (!auroraTicking) {
-                    requestAnimationFrame(updateAuroraParallax);
-                    auroraTicking = true;
-                }
-            }, { passive: true });
-            updateAuroraParallax();
-        }
-
-        // Progress nav - highlight active section - optimized
+        // Progress nav - highlight active section (IntersectionObserver)
         const progressDots = document.querySelectorAll('.progress-dot');
-        let progressTimeout;
+        const pagesForDots = Array.from(document.querySelectorAll('.page'));
 
-        function updateProgressNav() {
-            if (progressTimeout) return;
-            
-            progressTimeout = setTimeout(() => {
-                progressTimeout = null;
-                let current = 0;
-                const allPages = document.querySelectorAll('.page');
-                allPages.forEach((page, i) => {
-                    const rect = page.getBoundingClientRect();
-                    if (rect.top <= window.innerHeight / 2) current = i;
-                });
+        if ('IntersectionObserver' in window) {
+            const pageObserver = new IntersectionObserver((entries) => {
+                // pilih entry yang paling terlihat
+                const visible = entries
+                    .filter(e => e.isIntersecting)
+                    .sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0));
+
+                if (visible.length === 0) return;
+
+                const activePage = visible[0].target;
+                const idx = pagesForDots.indexOf(activePage);
+                if (idx < 0) return;
+
                 progressDots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === current);
+                    dot.classList.toggle('active', i === idx);
                 });
-            }, 100);
+            }, { rootMargin: '0px 0px -50% 0px', threshold: [0.01, 0.1, 0.25, 0.5] });
+
+            pagesForDots.forEach(p => pageObserver.observe(p));
+        } else {
+            // fallback: kalau IO tidak ada, tetap nonaktifkan update progress berbasis scroll
+            // (lebih ringan dan menghindari lag)
+            progressDots.forEach((dot, i) => dot.classList.toggle('active', i === 0));
         }
 
-        window.addEventListener('scroll', updateProgressNav, { passive: true });
-        updateProgressNav();
-
-        // Scroll reveal animation - optimized
-        let revealTimeout;
+        // Scroll reveal animation - replaced by IntersectionObserver
         function reveal() {
-            if (revealTimeout) return;
-            
-            revealTimeout = setTimeout(() => {
-                revealTimeout = null;
-                const reveals = document.querySelectorAll('.timeline-item:not(.active), .badge:not(.active), .stat-item:not(.active)');
-                const windowHeight = window.innerHeight;
-                const elementVisible = 150;
-                
-                for (let i = 0; i < reveals.length; i++) {
-                    const elementTop = reveals[i].getBoundingClientRect().top;
-                    if (elementTop < windowHeight - elementVisible) {
-                        reveals[i].classList.add('active');
-                    }
-                }
-            }, 100);
+            // no-op: implementasi diganti observer di bawah agar tidak ada listener scroll berat
         }
 
-        window.addEventListener('scroll', reveal, { passive: true });
+        if ('IntersectionObserver' in window) {
+            const revealEls = document.querySelectorAll('.timeline-item, .badge, .stat-item');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { rootMargin: '0px 0px -20% 0px', threshold: 0.01 });
 
-        // Smooth scroll behavior
-        document.addEventListener('DOMContentLoaded', function() {
-            // Create more particles on page load
+            revealEls.forEach(el => {
+                if (!el.classList.contains('active')) revealObserver.observe(el);
+            });
+        } else {
+            // fallback minimal (tanpa perhitungan bounding rect)
+            document.querySelectorAll('.timeline-item, .badge, .stat-item').forEach(el => el.classList.add('active'));
+        }
+
+
+        /* ===== Performance: pause off-screen page animations via IntersectionObserver ===== */
+        const allPageEls = document.querySelectorAll('.page');
+        if ('IntersectionObserver' in window) {
+            const pageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    entry.target.classList.toggle('in-view', entry.isIntersecting);
+                });
+            }, { rootMargin: '150px 0px', threshold: 0.01 });
+            allPageEls.forEach(page => pageObserver.observe(page));
+        } else {
+            // Fallback: keep everything visible/animated if IntersectionObserver isn't supported
+            allPageEls.forEach(page => page.classList.add('in-view'));
+        }
+
+        /* ===== Experience start — only runs after password is verified ===== */
+        let experienceStarted = false;
+
+        function startExperience() {
+            if (experienceStarted) return;
+            experienceStarted = true;
+
+            // Particle + balloon loops
+            setInterval(createParticle, 1200);
             for (let i = 0; i < 8; i++) {
                 setTimeout(createParticle, i * 200);
             }
-            
+            setInterval(createBalloon, 3500);
+            for (let i = 0; i < 3; i++) setTimeout(createBalloon, i * 600);
+
             // Initial reveal check
             reveal();
             revealCards();
             checkBirthdayPage();
-            
+
             // Confetti on welcome screen exit
             setTimeout(() => createConfetti(40), 4200);
-            
+
+            // Music: try autoplay, fall back to first click/touch
+            setTimeout(() => {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    userInteracted = true;
+                }).catch(e => {
+                    console.log('Autoplay prevented');
+                    musicIcon.textContent = '🔇';
+                    musicText.textContent = 'Tap to Play';
+                });
+            }, 4500);
+            ['click', 'touchstart'].forEach(evt => {
+                document.addEventListener(evt, enableAudio, { once: true });
+            });
+
             // Add hover effects to profile photos
             const profilePhotos = document.querySelectorAll('.card-profile, .profile-photo');
             profilePhotos.forEach(photo => {
@@ -3088,7 +3317,66 @@
                     setTimeout(() => this.classList.remove('shake'), 500);
                 });
             });
-        });
+        }
+
+        /* ===== Password lock screen ===== */
+        function initLockScreen() {
+            const lockScreen = document.getElementById('lockScreen');
+            const lockCard = lockScreen ? lockScreen.querySelector('.lock-card') : null;
+            const lockForm = document.getElementById('lockForm');
+            const passwordInput = document.getElementById('passwordInput');
+            const lockError = document.getElementById('lockError');
+            const CORRECT_PASSWORD = 'Aulia_GE';
+
+            function unlock() {
+                try { localStorage.setItem('vava_unlocked', '1'); } catch (e) {}
+                document.documentElement.classList.remove('locked');
+                document.body.classList.remove('locked');
+                document.body.classList.add('unlocked');
+                if (lockScreen) lockScreen.classList.add('is-unlocked');
+                setTimeout(() => { if (lockScreen) lockScreen.style.display = 'none'; }, 700);
+                startExperience();
+            }
+
+            function tryUnlock() {
+                if (!passwordInput) return;
+                if (passwordInput.value === CORRECT_PASSWORD) {
+                    unlock();
+                } else {
+                    if (lockError) lockError.textContent = 'Passwordnya salah, coba lagi yaa 🙏';
+                    if (lockCard) {
+                        lockCard.classList.add('shake');
+                        setTimeout(() => lockCard.classList.remove('shake'), 500);
+                    }
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+
+            if (lockForm) {
+                lockForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    tryUnlock();
+                });
+            }
+
+            let alreadyUnlocked = false;
+            try { alreadyUnlocked = localStorage.getItem('vava_unlocked') === '1'; } catch (e) {}
+
+            if (alreadyUnlocked) {
+                document.documentElement.classList.remove('locked');
+                document.body.classList.remove('locked');
+                document.body.classList.add('unlocked');
+                if (lockScreen) lockScreen.style.display = 'none';
+                startExperience();
+            } else {
+                document.documentElement.classList.add('locked');
+                document.body.classList.add('locked');
+                if (passwordInput) passwordInput.focus();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initLockScreen);
     </script>
 </body>
 </html>

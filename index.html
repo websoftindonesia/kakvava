@@ -329,6 +329,45 @@
             contain-intrinsic-size: 900px 1100px;
         }
 
+        /* ===== Performance: pause GPU-heavy effects while the page is actively scrolling =====
+           filter/backdrop-filter blur and constant transform animations are the main cause
+           of scroll jank (they force the browser to repaint every frame). We pause/lighten
+           them only for the brief moment the user is scrolling, then resume automatically. */
+        body.is-scrolling .aurora span,
+        body.is-scrolling .particle,
+        body.is-scrolling .icon-wave,
+        body.is-scrolling .decoration,
+        body.is-scrolling .hearts,
+        body.is-scrolling .badge,
+        body.is-scrolling .star-orbit,
+        body.is-scrolling .star-orbit span,
+        body.is-scrolling .card-profile.photo-3d,
+        body.is-scrolling .gallery-frame-inner,
+        body.is-scrolling .embrace-icon,
+        body.is-scrolling .balloon,
+        body.is-scrolling .confetti-piece {
+            animation-play-state: paused !important;
+        }
+
+        body.is-scrolling .aurora span {
+            filter: blur(30px);
+        }
+
+        body.is-scrolling .card {
+            transition: none !important;
+        }
+
+        /* backdrop-filter is one of the heaviest operations for Chrome's compositor,
+           especially when it sits above content that's moving/animating underneath it.
+           Card backgrounds are already ~92% opaque, so briefly dropping the blur during
+           the scroll burst is not noticeable but removes a major source of jank. */
+        body.is-scrolling .card,
+        body.is-scrolling .music-control,
+        body.is-scrolling .lock-card {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
         /* Welcome Screen */
         .welcome-screen {
             position: fixed;
@@ -2459,7 +2498,7 @@
         <div class="sparkles" style="bottom: 25%; right: 25%; animation-delay: 1.5s;">✨</div>
         
         <div class="profile-ring">
-            <img src="https://i.ibb.co.com/BKHgv6bV/723904482-18404377084158114-6226581287366985276-n.jpg" alt="Kak Vava" class="profile-photo">
+            <img src="https://i.ibb.co.com/BKHgv6bV/723904482-18404377084158114-6226581287366985276-n.jpg" alt="Kak Vava" class="profile-photo" width="180" height="180" decoding="async" fetchpriority="high">
         </div>
         <div class="welcome-text">Hallo!</div>
         <div class="welcome-sub">Pesan spesial kamu kak ✨</div>
@@ -2488,7 +2527,7 @@
     </div>
 
     <!-- Audio Element -->
-    <audio id="bgMusic" loop preload="auto">
+    <audio id="bgMusic" loop preload="auto" playsinline>
         <source src="The 1975 - About You.mp3" type="audio/mpeg">
         <!-- Fallback: jika ingin gunakan musik sendiri, upload file MP3 ke folder yang sama dan uncomment baris di bawah -->
         <!-- <source src="./music.mp3" type="audio/mpeg"> -->
@@ -2569,7 +2608,7 @@
         <div class="page page2" id="page2">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile photo-3d">
+                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
                 <div class="icon icon-wave">🌟</div>
                 <h1>Terima Kasih</h1>
                 <div class="message">
@@ -2612,7 +2651,7 @@
         <div class="page page3" id="page3">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile photo-3d">
+                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
                 <div class="icon icon-wave">🙏</div>
                 <h1>Dedikasi Luar Biasa</h1>
                 <div class="message">
@@ -2757,7 +2796,7 @@
         <div class="page page5" id="page5">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile photo-3d">
+                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
                 <div class="icon icon-wave">🗓️</div>
                 <h1>Perjalanan Kita</h1>
                 <div class="message">
@@ -2804,7 +2843,7 @@
         <div class="page page6" id="page6">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile photo-3d">
+                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
                 <div class="icon icon-wave">🎁</div>
                 <h1>Hadiah Kecil</h1>
                 <div class="message">
@@ -2850,6 +2889,7 @@
         
         function createParticle() {
             if (particleCount >= maxParticles) return;
+            if (document.body.classList.contains('is-scrolling')) return; // don't add DOM work while scrolling
             
             const particle = document.createElement('div');
             particle.className = 'particle';
@@ -2876,6 +2916,7 @@
 
         function createBalloon() {
             if (balloonCount >= maxBalloons) return;
+            if (document.body.classList.contains('is-scrolling')) return; // don't add DOM work while scrolling
             
             const balloon = document.createElement('div');
             balloon.className = 'balloon';
@@ -3052,8 +3093,9 @@
 
         // Enable audio after user interaction (required by mobile browsers)
         function enableAudio() {
-            if (!userInteracted) {
+            if (!userInteracted || !isPlaying) {
                 userInteracted = true;
+                bgMusic.muted = false;
                 bgMusic.play().then(() => {
                     isPlaying = true;
                     musicIcon.textContent = '🎵';
@@ -3067,7 +3109,49 @@
             }
         }
 
-        // Music autoplay attempt + click/touch fallback are started from startExperience() after unlock
+        /* ===== Robust autoplay: try to play WITH sound first (works when called
+           synchronously inside a real click/submit gesture, e.g. the password button).
+           If the browser still blocks it (autoplay policy on a page load with no gesture),
+           fall back to the "muted autoplay -> unmute right after" trick, which is allowed
+           by virtually every browser, so the music still starts on its own. ===== */
+        function attemptAutoplay() {
+            if (isPlaying) return;
+            bgMusic.muted = false;
+            const playPromise = bgMusic.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise.then(() => {
+                    isPlaying = true;
+                    userInteracted = true;
+                    musicIcon.textContent = '🎵';
+                    musicText.textContent = 'Playing...';
+                }).catch(() => {
+                    // Fallback: autoplay muted (always allowed), then unmute right away
+                    bgMusic.muted = true;
+                    bgMusic.play().then(() => {
+                        isPlaying = true;
+                        musicIcon.textContent = '🔈';
+                        musicText.textContent = 'Playing...';
+                        setTimeout(() => {
+                            bgMusic.muted = false;
+                            musicIcon.textContent = '🎵';
+                        }, 300);
+                    }).catch(() => {
+                        isPlaying = false;
+                        musicIcon.textContent = '🔇';
+                        musicText.textContent = 'Tap to Play';
+                    });
+                });
+            } else {
+                isPlaying = true;
+            }
+        }
+        // Extra safety net: the very first interaction of any kind (click, touch, key,
+        // or even the first scroll) will force sound on if it isn't already playing.
+        ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt => {
+            document.addEventListener(evt, () => {
+                if (!isPlaying || bgMusic.muted) enableAudio();
+            }, { once: true, passive: true });
+        });
 
         function toggleMusic() {
             if (!userInteracted) {
@@ -3164,19 +3248,44 @@
             }
         }
 
+        /* ===== Performance: mark body as "is-scrolling" so heavy blur/animation effects
+           pause automatically during scroll, then resume shortly after scroll stops. ===== */
+        let scrollRAF = null;
+        let scrollEndTimer = null;
+        function handleScrollState() {
+            if (!document.body.classList.contains('is-scrolling')) {
+                document.body.classList.add('is-scrolling');
+            }
+            if (scrollEndTimer) clearTimeout(scrollEndTimer);
+            scrollEndTimer = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+            }, 160);
+        }
+        window.addEventListener('scroll', () => {
+            if (scrollRAF) return;
+            scrollRAF = requestAnimationFrame(() => {
+                scrollRAF = null;
+                handleScrollState();
+            });
+        }, { passive: true });
+
         /* Parallax effect on mouse move - optimized */
         let mouseMoveTimeout;
+        let cachedCards = null;
         document.addEventListener('mousemove', function(e) {
+            // Skip entirely while the user is scrolling to keep scroll smooth
+            if (document.body.classList.contains('is-scrolling')) return;
             // Throttle mousemove for better performance
             if (mouseMoveTimeout) return;
-            
+
             mouseMoveTimeout = setTimeout(() => {
                 mouseMoveTimeout = null;
-                const cards = document.querySelectorAll('.card:not(:hover)');
+                if (!cachedCards) cachedCards = document.querySelectorAll('.card');
                 const moveX = (e.clientX - window.innerWidth / 2) / 80; // Reduced from 60
                 const moveY = (e.clientY - window.innerHeight / 2) / 80; // Reduced from 60
-                
-                cards.forEach(card => {
+
+                cachedCards.forEach(card => {
+                    if (card.matches(':hover')) return;
                     card.style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
                 });
             }, 50); // Throttle to every 50ms
@@ -3294,20 +3403,10 @@
             // Confetti on welcome screen exit
             setTimeout(() => createConfetti(40), 4200);
 
-            // Music: try autoplay, fall back to first click/touch
-            setTimeout(() => {
-                bgMusic.play().then(() => {
-                    isPlaying = true;
-                    userInteracted = true;
-                }).catch(e => {
-                    console.log('Autoplay prevented');
-                    musicIcon.textContent = '🔇';
-                    musicText.textContent = 'Tap to Play';
-                });
-            }, 4500);
-            ['click', 'touchstart'].forEach(evt => {
-                document.addEventListener(evt, enableAudio, { once: true });
-            });
+            // Music: attempt autoplay right away (muted-fallback trick if needed).
+            // The extra 'click/touchstart/keydown/scroll' safety net registered above
+            // will also kick sound on at the very first interaction if this gets blocked.
+            attemptAutoplay();
 
             // Add hover effects to profile photos
             const profilePhotos = document.querySelectorAll('.card-profile, .profile-photo');
@@ -3335,6 +3434,9 @@
                 document.body.classList.add('unlocked');
                 if (lockScreen) lockScreen.classList.add('is-unlocked');
                 setTimeout(() => { if (lockScreen) lockScreen.style.display = 'none'; }, 700);
+                // Called synchronously inside the submit/click gesture so the browser
+                // treats it as a real user interaction and allows sound immediately.
+                attemptAutoplay();
                 startExperience();
             }
 

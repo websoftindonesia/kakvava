@@ -22,6 +22,45 @@
             --accent-4: #f5576c;
             --radius-lg: 28px;
             --radius-xl: 36px;
+
+            /* Theme-aware text/surface colors. Light values by default. */
+            --body-bg: #0f0c29;
+            --text-strong: #333;
+            --text-body: #444;
+            --text-muted: #555;
+            --card-border: rgba(255, 255, 255, 0.5);
+            --divider: rgba(102, 126, 234, 0.35);
+            --toggle-bg: rgba(255, 255, 255, 0.15);
+            --toggle-border: rgba(255, 255, 255, 0.3);
+            --toggle-icon: #ffe27a;
+            --progress-bar-bg: rgba(255, 255, 255, 0.15);
+
+            --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* Dark theme overrides. Toggled via data-theme on <html>,
+           defaults to the visitor's OS preference (see inline script in <body>). */
+        html[data-theme="dark"] {
+            --card-bg: rgba(24, 22, 40, 0.88);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --shadow-glow: 0 20px 60px rgba(0, 0, 0, 0.55);
+            --text-strong: #f3f1fa;
+            --text-body: #d8d5e6;
+            --text-muted: #b9b5cc;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --divider: rgba(180, 170, 255, 0.3);
+            --toggle-bg: rgba(255, 255, 255, 0.08);
+            --toggle-border: rgba(255, 255, 255, 0.18);
+            --toggle-icon: #c9c3ff;
+            --progress-bar-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Cards, text, and glass surfaces fade smoothly when the theme flips
+           instead of snapping instantly. Kept off animation-heavy elements. */
+        .card, .message, .message strong, .timeline-content, .stat-label,
+        .memory-list li, .quote-box, .music-control, .theme-toggle,
+        .progress-bar-track, .back-to-top, body {
+            transition: var(--theme-transition);
         }
 
         * {
@@ -32,21 +71,34 @@
 
         html {
             scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             font-family: var(--font-body);
             overflow-x: hidden;
-            background: #0f0c29;
-            color: #333;
-            /* Performance optimizations */
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeSpeed;
+            background: var(--body-bg);
+            color: var(--text-strong);
         }
 
-        /* Floating particles - optimized */
+        /* Skip layout/paint work for sections not currently on screen.
+           Huge win on long scrolling pages with heavy gradients/blur. */
+        .page {
+            content-visibility: auto;
+            contain-intrinsic-size: 900px;
+        }
+
+        /* Respect users/devices that ask for less motion, and keep
+           animation end-states applied instantly instead of looping forever */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Floating particles */
         .particles {
             position: fixed;
             top: 0;
@@ -55,14 +107,12 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
-            will-change: contents;
         }
 
         .particle {
             position: absolute;
             font-size: 20px;
             animation: float 6s infinite ease-in-out;
-            will-change: transform, opacity;
         }
 
         @keyframes float {
@@ -82,13 +132,12 @@
             }
         }
 
-        /* Aurora background - optimized */
+        /* Aurora background */
         .aurora {
             position: absolute;
             inset: 0;
             overflow: hidden;
             pointer-events: none;
-            will-change: transform;
         }
 
         .aurora span {
@@ -96,10 +145,9 @@
             width: 150%;
             height: 150%;
             border-radius: 50%;
-            filter: blur(60px);
+            filter: blur(80px);
             opacity: 0.45;
             animation: auroraMove 12s ease-in-out infinite alternate;
-            will-change: transform;
         }
 
         .aurora span:nth-child(1) {
@@ -139,9 +187,6 @@
             flex-direction: column;
             gap: 12px;
             opacity: 0;
-        }
-
-        body.unlocked .progress-nav {
             animation: showContent 1s ease-in 5s forwards;
         }
 
@@ -186,188 +231,6 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
         }
 
-        /* ===== Password Lock Screen ===== */
-        html.locked, body.locked {
-            overflow: hidden;
-            height: 100%;
-        }
-
-        .lock-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 100000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            padding: 20px;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-        }
-
-        .lock-screen.is-unlocked {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .lock-card {
-            position: relative;
-            z-index: 2;
-            max-width: 420px;
-            width: 100%;
-            background: var(--card-bg);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-glow);
-            padding: 48px 36px;
-            text-align: center;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            animation: cardSlideUp 0.8s ease-out;
-        }
-
-        .lock-icon {
-            font-size: 3.2em;
-            margin-bottom: 8px;
-            display: inline-block;
-            animation: iconWave 2.5s ease-in-out infinite;
-        }
-
-        .lock-card h1 {
-            font-size: 1.9em;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .lock-sub {
-            color: #555;
-            font-size: 0.98em;
-            line-height: 1.6;
-            margin-bottom: 26px;
-        }
-
-        .lock-form {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .lock-input {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 14px;
-            border: 2px solid rgba(102, 126, 234, 0.25);
-            font-family: var(--font-body);
-            font-size: 1.05em;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-
-        .lock-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-        }
-
-        .lock-btn {
-            border: none;
-            border-radius: 14px;
-            padding: 14px 22px;
-            font-family: var(--font-body);
-            font-weight: 700;
-            font-size: 1.02em;
-            color: white;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.35);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .lock-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(102, 126, 234, 0.45);
-        }
-
-        .lock-btn:active {
-            transform: translateY(0);
-        }
-
-        .lock-error {
-            min-height: 20px;
-            color: #f5576c;
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        /* ===== Performance: pause heavy animations on off-screen pages ===== */
-        .page:not(.in-view) .aurora span,
-        .page:not(.in-view) .icon-wave,
-        .page:not(.in-view) .decoration,
-        .page:not(.in-view) .hearts,
-        .page:not(.in-view) .badge,
-        .page:not(.in-view) .star-orbit,
-        .page:not(.in-view) .star-orbit span,
-        .page:not(.in-view) .card-profile.photo-3d,
-        .page:not(.in-view) .gallery-frame-inner,
-        .page:not(.in-view) .embrace-icon {
-            animation-play-state: paused;
-        }
-
-        .page:not(.in-view) .aurora span {
-            will-change: auto;
-        }
-
-        .page.in-view .aurora span {
-            will-change: transform;
-        }
-
-        /* Skip layout/paint work for offscreen pages */
-        .page {
-            content-visibility: auto;
-            contain-intrinsic-size: 900px 1100px;
-        }
-
-        /* ===== Performance: pause GPU-heavy effects while the page is actively scrolling =====
-           filter/backdrop-filter blur and constant transform animations are the main cause
-           of scroll jank (they force the browser to repaint every frame). We pause/lighten
-           them only for the brief moment the user is scrolling, then resume automatically. */
-        body.is-scrolling .aurora span,
-        body.is-scrolling .particle,
-        body.is-scrolling .icon-wave,
-        body.is-scrolling .decoration,
-        body.is-scrolling .hearts,
-        body.is-scrolling .badge,
-        body.is-scrolling .star-orbit,
-        body.is-scrolling .star-orbit span,
-        body.is-scrolling .card-profile.photo-3d,
-        body.is-scrolling .gallery-frame-inner,
-        body.is-scrolling .embrace-icon,
-        body.is-scrolling .balloon,
-        body.is-scrolling .confetti-piece {
-            animation-play-state: paused !important;
-        }
-
-        body.is-scrolling .aurora span {
-            filter: blur(30px);
-        }
-
-        body.is-scrolling .card {
-            transition: none !important;
-        }
-
-        /* backdrop-filter is one of the heaviest operations for Chrome's compositor,
-           especially when it sits above content that's moving/animating underneath it.
-           Card backgrounds are already ~92% opaque, so briefly dropping the blur during
-           the scroll burst is not noticeable but removes a major source of jank. */
-        body.is-scrolling .card,
-        body.is-scrolling .music-control,
-        body.is-scrolling .lock-card {
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-        }
-
         /* Welcome Screen */
         .welcome-screen {
             position: fixed;
@@ -381,11 +244,8 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            overflow: hidden;
-        }
-
-        body.unlocked .welcome-screen {
             animation: fadeOut 1s ease-in 4s forwards;
+            overflow: hidden;
         }
 
         @keyframes fadeOut {
@@ -539,12 +399,9 @@
         /* Main Content */
         .main-content {
             opacity: 0;
+            animation: showContent 1s ease-in 4.5s forwards;
             position: relative;
             z-index: 2;
-        }
-
-        body.unlocked .main-content {
-            animation: showContent 1s ease-in 4.5s forwards;
         }
 
         @keyframes showContent {
@@ -603,9 +460,8 @@
             animation: cardSlideUp 0.8s ease-out;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--card-border);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
-            will-change: transform;
         }
 
         .card::before {
@@ -725,7 +581,7 @@
         .page6 .recipient { color: #30cfd0; }
 
         .message {
-            color: #444;
+            color: var(--text-body);
             font-size: 1.15em;
             line-height: 1.95;
             margin-bottom: 30px;
@@ -733,7 +589,7 @@
         }
 
         .message strong {
-            color: #333;
+            color: var(--text-strong);
             font-weight: 700;
         }
 
@@ -855,7 +711,7 @@
         .memory-list li {
             margin: 14px 0;
             padding: 14px 18px;
-            color: #444;
+            color: var(--text-body);
             font-size: 1.1em;
             line-height: 1.7;
             animation: slideInLeft 0.5s ease-out backwards;
@@ -879,7 +735,7 @@
             color: #667eea;
             animation: fadeIn 1.5s ease-out;
             padding-top: 24px;
-            border-top: 1px dashed rgba(102, 126, 234, 0.35);
+            border-top: 1px dashed var(--divider);
         }
 
         @keyframes fadeIn {
@@ -931,7 +787,7 @@
         .timeline-item {
             padding: 22px 24px;
             margin: 15px 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(102,126,234,0.05));
+            background: linear-gradient(135deg, var(--card-bg), rgba(102,126,234,0.05));
             border-radius: 18px;
             border-left: 4px solid #667eea;
             animation: slideInRight 0.8s ease-out backwards;
@@ -951,13 +807,13 @@
         }
 
         .timeline-content {
-            color: #555;
+            color: var(--text-muted);
             line-height: 1.6;
         }
 
         /* Quote box */
         .quote-box {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(245,87,108,0.08));
+            background: linear-gradient(135deg, var(--card-bg), rgba(245,87,108,0.08));
             padding: 30px 30px 30px 40px;
             border-radius: 20px;
             border: none;
@@ -966,7 +822,7 @@
             font-family: var(--font-display);
             font-style: italic;
             font-size: 1.15em;
-            color: #444;
+            color: var(--text-body);
             position: relative;
             animation: scaleIn 0.8s ease-out;
             box-shadow: inset 0 0 30px rgba(245, 87, 108, 0.06);
@@ -1083,7 +939,7 @@
 
         .stat-label {
             font-size: 1em;
-            color: #555;
+            color: var(--text-muted);
             margin-top: 5px;
         }
 
@@ -1121,6 +977,13 @@
             transform: scale(0.96);
         }
 
+        .interactive-btn:disabled {
+            opacity: 0.65;
+            cursor: default;
+            animation: none;
+            transform: none;
+        }
+
         /* Click effect */
         .click-effect {
             position: fixed;
@@ -1148,13 +1011,11 @@
         .card:hover {
             transform: translateY(-8px);
             box-shadow: 0 35px 90px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.6);
-            will-change: transform, box-shadow;
         }
 
         .card-profile:hover {
             transform: rotate(360deg) scale(1.1);
             transition: transform 0.8s;
-            will-change: transform;
         }
 
         /* Emoji reaction box */
@@ -1581,531 +1442,171 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* ===== 3D & Parallax Enhancements ===== */
-
-        /* Card cursor-tilt (driven by JS on desktop) */
-        .card {
-            transform-style: preserve-3d;
-        }
-
-        /* Floating 3D profile photo */
-        .card-profile.photo-3d {
-            transform-style: preserve-3d;
-            animation: photoFloat3D 6s ease-in-out infinite;
-        }
-
-        @keyframes photoFloat3D {
-            0%, 100% { transform: perspective(800px) rotateY(-6deg) rotateX(2deg) translateZ(0); }
-            50% { transform: perspective(800px) rotateY(6deg) rotateX(-2deg) translateZ(18px); }
-        }
-
-        .card-profile.photo-3d:hover {
-            animation-play-state: paused;
-            transform: perspective(800px) rotateY(0deg) rotateX(0deg) scale(1.12) translateZ(30px);
-            transition: transform 0.5s ease;
-        }
-
-        /* 3D flip photo gallery */
-        .gallery-3d {
-            display: flex;
-            justify-content: center;
-            gap: 18px;
-            flex-wrap: wrap;
-            margin: 28px 0;
-            perspective: 1200px;
-        }
-
-        .gallery-frame {
-            width: 130px;
-            height: 130px;
-            position: relative;
-        }
-
-        .gallery-frame-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-            animation: photoFloat 3.5s ease-in-out infinite;
-        }
-
-        .gallery-frame:hover .gallery-frame-inner {
-            transform: rotateY(180deg);
-            animation-play-state: paused;
-        }
-
-        .gallery-frame-face {
-            position: absolute;
-            inset: 0;
-            border-radius: 16px;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid white;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            font-size: 0.78em;
-            color: white;
-            text-align: center;
-            padding: 8px;
-            line-height: 1.4;
-        }
-
-        .gallery-frame-front {
-            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-        }
-
-        .gallery-frame-back {
-            background: linear-gradient(135deg, var(--accent-3), var(--accent-4));
-            transform: rotateY(180deg);
-        }
-
-        .gallery-frame-front .emoji-big {
-            font-size: 2.2em;
-            margin-bottom: 6px;
-        }
-
-        .gallery-frame:nth-child(1) .gallery-frame-inner { animation-delay: 0s; }
-        .gallery-frame:nth-child(2) .gallery-frame-inner { animation-delay: 0.4s; }
-        .gallery-frame:nth-child(3) .gallery-frame-inner { animation-delay: 0.8s; }
-        .gallery-frame:nth-child(4) .gallery-frame-inner { animation-delay: 1.2s; }
-
-        .gallery-caption {
-            font-size: 0.95em;
-            color: #666;
-            margin-top: -12px;
-            margin-bottom: 18px;
-        }
-
-        /* Momen Berharga — embrace animation */
-        .embrace-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin: 8px 0 22px;
-            perspective: 600px;
-        }
-
-        .embrace-icon {
-            font-size: 2.6em;
-            display: inline-block;
-        }
-
-        .embrace-icon.left { animation: embraceMeetLeft 3s ease-in-out infinite; }
-        .embrace-icon.right { animation: embraceMeetRight 3s ease-in-out infinite; }
-
-        @keyframes embraceMeetLeft {
-            0%, 100% { transform: translateX(-14px) rotate(-8deg) translateZ(0); }
-            50% { transform: translateX(0) rotate(0deg) translateZ(25px); }
-        }
-
-        @keyframes embraceMeetRight {
-            0%, 100% { transform: translateX(14px) rotate(8deg) translateZ(0); }
-            50% { transform: translateX(0) rotate(0deg) translateZ(25px); }
-        }
-
-        .moment-highlight {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(79, 172, 254, 0.08));
-            border-left: 4px solid #4facfe;
-            border-radius: 20px;
-            padding: 24px 30px;
-            margin: 26px 0;
-            font-family: var(--font-display);
-            font-style: italic;
-            font-size: 1.2em;
-            color: #333;
-            box-shadow: inset 0 0 30px rgba(79, 172, 254, 0.06);
-            animation: scaleIn 0.8s ease-out;
-        }
-
-        .page-moment .recipient { color: #4facfe; }
-
-        .timeline-item:nth-child(4) { animation-delay: 0.8s; }
-
-        @media (prefers-reduced-motion: reduce) {
-            .card-profile.photo-3d,
-            .gallery-frame-inner,
-            .embrace-icon {
-                animation: none !important;
-            }
-            .card {
-                transition: none !important;
-            }
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
-            html {
-                font-size: 15px;
-            }
-
-            body {
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-            }
-
             .progress-nav {
-                right: 8px;
-                gap: 8px;
-                transform: translateY(-50%) scale(0.9);
-            }
-
-            .progress-dot {
-                width: 8px;
-                height: 8px;
-                border-width: 1.5px;
-            }
-
-            .progress-dot.active {
-                transform: scale(1.3);
+                right: 12px;
+                gap: 10px;
             }
 
             .progress-dot::after {
                 display: none;
             }
 
-            /* Welcome screen mobile */
             .welcome-sub {
-                font-size: 0.8em;
-                letter-spacing: 0.1em;
-                padding: 0 20px;
-                text-align: center;
-            }
-
-            .birthday-badge-welcome {
                 font-size: 0.85em;
-                padding: 8px 18px;
-                margin-top: 16px;
             }
-            
             .welcome-text {
-                font-size: 1.9em;
+                font-size: 2em;
                 margin-top: 20px;
             }
             
             .profile-photo {
-                width: 140px;
-                height: 140px;
+                width: 130px;
+                height: 130px;
             }
 
             .profile-ring {
                 padding: 4px;
             }
 
-            .profile-ring::before {
-                animation: ringSpin 3s linear infinite;
-            }
-
-            /* Card mobile optimization */
             .card-profile {
-                width: 90px;
-                height: 90px;
-                font-size: 36px;
-                border-width: 3px;
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+                border: 3px solid #667eea;
             }
             
             .sparkles {
-                font-size: 18px;
+                font-size: 20px;
             }
             
             h1 {
-                font-size: 1.75em;
-                margin-bottom: 14px;
-                line-height: 1.2;
+                font-size: 1.8em;
+                margin-bottom: 15px;
             }
             
             .recipient {
-                font-size: 1.2em;
-                margin-bottom: 18px;
-                line-height: 1.3;
+                font-size: 1.3em;
+                margin-bottom: 20px;
             }
             
             .card {
-                padding: 32px 20px;
-                max-width: 94%;
-                border-radius: 24px;
-                margin: 0 auto;
-            }
-
-            .card::before {
-                border-radius: calc(24px + 2px);
+                padding: 30px 20px;
+                max-width: 90%;
+                border-radius: 20px;
             }
 
             .message {
-                font-size: 0.95em;
-                line-height: 1.75;
+                font-size: 1em;
+                line-height: 1.7;
                 margin-bottom: 20px;
-                text-align: left;
             }
 
             .icon {
-                font-size: 55px;
-                margin-bottom: 14px;
-            }
-
-            .icon-wave {
-                animation-duration: 2s;
+                font-size: 60px;
+                margin-bottom: 15px;
             }
 
             .decoration {
-                font-size: 28px;
-                margin: 14px 0;
+                font-size: 30px;
+                margin: 15px 0;
             }
 
             .hearts {
-                font-size: 26px;
-                margin: 18px 0;
+                font-size: 28px;
+                margin: 15px 0;
             }
 
-            /* List mobile */
             .memory-list {
                 max-width: 100%;
-                padding: 0 5px;
+                padding: 0 10px;
             }
 
             .memory-list li {
-                font-size: 0.95em;
-                margin: 10px 0;
-                padding: 12px 14px;
-                line-height: 1.6;
-                border-radius: 12px;
-                border-left-width: 3px;
-            }
-
-            /* Timeline mobile */
-            .timeline {
-                max-width: 100%;
-                margin: 24px 0;
-            }
-
-            .timeline-item {
-                padding: 16px 18px;
+                font-size: 1em;
                 margin: 12px 0;
-                font-size: 0.95em;
-                border-radius: 14px;
-                border-left-width: 3px;
-            }
-
-            .timeline-date {
-                font-size: 0.85em;
-                margin-bottom: 6px;
-            }
-
-            .timeline-content {
-                font-size: 0.95em;
                 line-height: 1.6;
             }
 
-            /* Quote box mobile */
-            .quote-box {
-                padding: 24px 20px 24px 32px;
-                margin: 24px 0;
-                font-size: 1em;
-                border-radius: 16px;
-                line-height: 1.7;
-            }
-
-            .quote-box::before {
-                font-size: 45px;
-                top: -8px;
-                left: 10px;
-            }
-
-            /* Stats mobile */
-            .stats {
-                margin: 24px 0;
-                gap: 16px;
-            }
-
-            .stat-item {
-                min-width: 80px;
-            }
-
-            .stat-number {
-                font-size: 2.5em;
-            }
-
-            .stat-label {
-                font-size: 0.9em;
-            }
-
-            /* Badges mobile */
-            .badges {
-                gap: 12px;
-                margin: 24px 0;
-            }
-
-            .badge {
-                padding: 12px 20px;
-                font-size: 0.9em;
-                border-radius: 40px;
-            }
-
-            /* Emoji reactions mobile */
-            .emoji-reactions {
-                gap: 10px;
-                margin: 20px 0;
-            }
-
-            .emoji-btn {
-                width: 54px;
-                height: 54px;
-                font-size: 28px;
-            }
-
-            .emoji-btn:hover {
-                transform: scale(1.2) rotate(10deg);
-            }
-
-            /* Interactive button mobile */
-            .interactive-btn {
-                padding: 14px 28px;
-                font-size: 1em;
-                margin: 18px 0;
-                border-radius: 40px;
-                white-space: normal;
-                line-height: 1.4;
-            }
-
-            /* Signature mobile */
             .signature {
-                font-size: 1.05em;
-                margin-top: 24px;
-                padding-top: 20px;
-                line-height: 1.6;
+                font-size: 1.1em;
+                margin-top: 20px;
             }
 
-            /* Music control mobile */
             .music-control {
-                bottom: 14px;
-                right: 14px;
-                padding: 10px 16px;
-                font-size: 0.85em;
-                border-radius: 40px;
-                backdrop-filter: blur(12px);
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 18px;
+                font-size: 14px;
             }
 
             .music-icon {
                 font-size: 20px;
             }
 
-            /* Scroll indicator mobile */
             .scroll-indicator {
-                font-size: 10px;
-                bottom: 18px;
-                padding-bottom: 38px;
-                letter-spacing: 0.06em;
+                font-size: 11px;
+                bottom: 20px;
+                padding-bottom: 40px;
             }
 
             .scroll-indicator::after {
                 width: 20px;
                 height: 32px;
-                border-width: 2px;
-            }
-
-            .scroll-indicator::before {
-                bottom: 24px;
-                width: 3px;
-                height: 6px;
             }
 
             .page {
-                padding: 36px 12px;
-                min-height: 100vh;
-                min-height: 100dvh; /* Dynamic viewport height for mobile */
+                padding: 40px 15px;
             }
 
-            /* Birthday page mobile */
             .birthday-number {
-                font-size: 4.5em;
-            }
-
-            .birthday-number-wrap {
-                min-height: 100px;
-                margin: 8px 0 16px;
+                font-size: 5em;
             }
 
             .birthday-cake {
-                font-size: 3.2em;
-                margin-bottom: 8px;
+                font-size: 3.5em;
             }
 
             .birthday-date-badge {
-                font-size: 0.85em;
-                padding: 10px 18px;
-                gap: 6px;
+                font-size: 0.9em;
+                padding: 10px 20px;
                 flex-wrap: wrap;
                 justify-content: center;
                 text-align: center;
-                margin: 16px 0;
-                border-radius: 40px;
             }
 
-            .birthday-wishes {
-                margin-top: 20px;
-            }
-
-            .birthday-wishes .wish-line {
-                font-size: 0.95em;
-                margin-bottom: 14px;
-                line-height: 1.7;
-            }
-
-            .birthday-sparkles {
-                font-size: 1.2em;
-            }
-
-            .star-orbit span {
-                font-size: 1.1em;
-            }
-
-            /* Balloons mobile */
-            .balloon {
-                width: 28px;
-                height: 36px;
-            }
-
-            .balloon::after {
-                height: 24px;
-            }
-
-            /* Aurora mobile */
-            .aurora span {
-                filter: blur(60px);
-                opacity: 0.35;
-            }
-
-            /* Particle mobile */
             .particle {
-                font-size: 15px;
+                font-size: 16px;
             }
 
-            /* Floating heart mobile */
-            .floating-heart {
-                font-size: 24px;
+            /* Heavy blur/backdrop-filter is a common cause of scroll lag on phones.
+               Trim it down on smaller/weaker devices. */
+            .aurora span {
+                filter: blur(40px);
             }
 
-            /* Photo gallery mobile */
-            .photo-item {
-                width: 80px;
-                height: 80px;
-                border-radius: 12px;
-                border-width: 2px;
+            .card {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+
+            .music-control {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
             }
         }
 
         /* Tablet optimization */
         @media (min-width: 769px) and (max-width: 1024px) {
             .welcome-text {
-                font-size: 2.8em;
+                font-size: 3em;
             }
 
             .profile-photo {
                 width: 160px;
                 height: 160px;
+                font-size: 70px;
             }
 
             .card-profile {
@@ -2115,33 +1616,24 @@
             }
 
             h1 {
-                font-size: 2.3em;
+                font-size: 2.4em;
             }
 
             .recipient {
-                font-size: 1.65em;
+                font-size: 1.7em;
             }
 
             .card {
-                max-width: 680px;
-                padding: 45px 36px;
+                max-width: 650px;
+                padding: 45px 35px;
             }
 
             .message {
-                font-size: 1.08em;
-                line-height: 1.85;
+                font-size: 1.1em;
             }
 
             .icon {
-                font-size: 75px;
-            }
-
-            .birthday-number {
-                font-size: 6em;
-            }
-
-            .birthday-cake {
-                font-size: 4.2em;
+                font-size: 80px;
             }
         }
 
@@ -2171,23 +1663,8 @@
 
         /* Small mobile devices */
         @media (max-width: 480px) {
-            html {
-                font-size: 14px;
-            }
-
             .welcome-text {
-                font-size: 1.7em;
-                line-height: 1.2;
-            }
-
-            .welcome-sub {
-                font-size: 0.75em;
-                padding: 0 16px;
-            }
-
-            .birthday-badge-welcome {
-                font-size: 0.8em;
-                padding: 7px 16px;
+                font-size: 1.8em;
             }
 
             .profile-photo {
@@ -2196,292 +1673,485 @@
             }
 
             .card-profile {
-                width: 80px;
-                height: 80px;
-                font-size: 32px;
+                width: 90px;
+                height: 90px;
+                font-size: 36px;
             }
 
             h1 {
                 font-size: 1.6em;
-                margin-bottom: 12px;
             }
 
             .recipient {
-                font-size: 1.15em;
-                margin-bottom: 16px;
+                font-size: 1.2em;
             }
 
             .card {
-                padding: 28px 18px;
-                max-width: 96%;
+                padding: 25px 18px;
             }
 
             .message {
-                font-size: 0.92em;
-                line-height: 1.7;
-            }
-
-            .icon {
-                font-size: 48px;
+                font-size: 0.95em;
             }
 
             .memory-list li {
-                font-size: 0.9em;
-                padding: 11px 13px;
-            }
-
-            .timeline-item {
-                padding: 14px 16px;
-                font-size: 0.9em;
-            }
-
-            .quote-box {
                 font-size: 0.95em;
-                padding: 20px 18px 20px 28px;
-            }
-
-            .quote-box::before {
-                font-size: 40px;
-            }
-
-            .stat-number {
-                font-size: 2.2em;
-            }
-
-            .stat-label {
-                font-size: 0.85em;
-            }
-
-            .badge {
-                padding: 10px 18px;
-                font-size: 0.85em;
-            }
-
-            .emoji-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 26px;
-            }
-
-            .interactive-btn {
-                padding: 12px 24px;
-                font-size: 0.95em;
-            }
-
-            .signature {
-                font-size: 1em;
             }
 
             .music-control {
-                padding: 9px 14px;
-                font-size: 0.8em;
-                bottom: 12px;
-                right: 12px;
+                padding: 8px 15px;
+                font-size: 12px;
             }
 
             .music-icon {
                 font-size: 18px;
-            }
-
-            .birthday-number {
-                font-size: 4em;
-            }
-
-            .birthday-cake {
-                font-size: 2.8em;
-            }
-
-            .birthday-date-badge {
-                font-size: 0.8em;
-                padding: 9px 16px;
-            }
-
-            .birthday-wishes .wish-line {
-                font-size: 0.9em;
-                margin-bottom: 12px;
-            }
-        }
-
-        /* Extra small devices */
-        @media (max-width: 360px) {
-            html {
-                font-size: 13px;
-            }
-
-            .card {
-                padding: 24px 16px;
-            }
-
-            .welcome-text {
-                font-size: 1.6em;
-            }
-
-            .profile-photo {
-                width: 110px;
-                height: 110px;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            .birthday-number {
-                font-size: 3.5em;
             }
         }
 
         /* Landscape mobile */
         @media (max-height: 600px) and (orientation: landscape) {
             .page {
-                padding: 24px 20px;
-                min-height: auto;
+                padding: 30px 20px;
             }
 
             .card {
-                padding: 24px 28px;
-                margin: 20px auto;
+                padding: 30px 25px;
             }
 
             .welcome-screen {
-                padding: 16px;
+                padding: 20px;
             }
 
             .profile-photo {
-                width: 90px;
-                height: 90px;
-            }
-
-            .profile-ring {
-                padding: 3px;
+                width: 100px;
+                height: 100px;
             }
 
             .welcome-text {
-                font-size: 1.8em;
-                margin-top: 12px;
-            }
-
-            .welcome-sub {
-                font-size: 0.75em;
-                margin-top: 8px;
-            }
-
-            .birthday-badge-welcome {
-                font-size: 0.8em;
-                padding: 6px 14px;
-                margin-top: 12px;
+                font-size: 2em;
+                margin-top: 15px;
             }
 
             .icon {
-                font-size: 42px;
-                margin-bottom: 8px;
-            }
-
-            h1 {
-                font-size: 1.6em;
+                font-size: 50px;
                 margin-bottom: 10px;
             }
 
-            .recipient {
-                font-size: 1.2em;
-                margin-bottom: 12px;
-            }
-
-            .message {
-                font-size: 0.9em;
-                margin-bottom: 16px;
-            }
-
-            .birthday-number {
-                font-size: 3.5em;
-            }
-
-            .birthday-number-wrap {
-                min-height: 80px;
-            }
-
-            .birthday-cake {
-                font-size: 2.5em;
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 10px;
             }
 
             .scroll-indicator {
                 display: none;
             }
+        }
 
-            .aurora span {
-                filter: blur(50px);
+        /* ============================================
+           NEW: Scroll progress bar
+           Pure CSS width transition driven by a single
+           rAF-throttled scroll listener — one paint per frame max.
+        ============================================ */
+        .progress-bar-track {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--progress-bar-bg);
+            z-index: 1002;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-3), var(--accent-4));
+            background-size: 200% auto;
+            animation: shimmerText 4s linear infinite;
+            box-shadow: 0 0 12px rgba(240, 147, 251, 0.6);
+        }
+
+        /* ============================================
+           NEW: Light/Dark theme toggle
+        ============================================ */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 1001;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--toggle-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--toggle-border);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 22px;
+            transition: var(--theme-transition), transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--toggle-icon);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(-12deg);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.92);
+        }
+
+        .theme-toggle .toggle-icon {
+            display: inline-block;
+            animation: toggleSpinIn 0.5s ease-out;
+        }
+
+        @keyframes toggleSpinIn {
+            from {
+                transform: rotate(-180deg) scale(0.4);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(0deg) scale(1);
+                opacity: 1;
             }
         }
 
-        /* iOS specific fixes */
-        @supports (-webkit-touch-callout: none) {
-            body {
-                -webkit-tap-highlight-color: transparent;
-            }
-
-            .card {
-                -webkit-transform: translateZ(0);
-                transform: translateZ(0);
-            }
-
-            .music-control {
-                -webkit-backdrop-filter: blur(16px);
-            }
-
-            input, textarea, select {
-                font-size: 16px !important; /* Prevent iOS zoom on focus */
-            }
+        /* ============================================
+           NEW: Back-to-top button
+           Hidden by default; a single lightweight class
+           toggle (no continuous animation while hidden).
+        ============================================ */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--toggle-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--toggle-border);
+            box-shadow: var(--shadow-soft);
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(16px) scale(0.8);
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease;
         }
 
-        /* Touch device optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .card:hover {
-                transform: translateY(0);
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-4px) scale(1.08);
+        }
+
+        /* ============================================
+           NEW: Toast notifications (share button, etc.)
+        ============================================ */
+        .toast-container {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            color: var(--text-strong);
+            padding: 12px 22px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--card-border);
+            font-weight: 600;
+            font-size: 0.95em;
+            animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), toastOut 0.35s ease-in 2.2s forwards;
+            white-space: nowrap;
+        }
+
+        @keyframes toastIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes toastOut {
+            to { transform: translateY(-10px); opacity: 0; }
+        }
+
+        /* ============================================
+           NEW: Card tilt + shimmer sheen on hover.
+           CSS-only (no JS cost); the shimmer only animates
+           while :hover is active so it's free the rest of the time.
+        ============================================ */
+        .card {
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.35) 35%, transparent 50%);
+            background-size: 250% 250%;
+            background-position: -100% -100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::after {
+            opacity: 1;
+            animation: cardSheen 1.1s ease-out;
+        }
+
+        @keyframes cardSheen {
+            from { background-position: -100% -100%; }
+            to { background-position: 100% 100%; }
+        }
+
+        html[data-theme="dark"] .card::after {
+            background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.12) 35%, transparent 50%);
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 14px;
+                right: 14px;
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
             }
 
-            .emoji-btn:hover,
-            .badge:hover,
-            .memory-list li:hover,
-            .timeline-item:hover {
-                transform: none;
+            .back-to-top {
+                bottom: 15px;
+                left: 15px;
+                width: 44px;
+                height: 44px;
+                font-size: 17px;
             }
 
-            .tooltip .tooltiptext {
-                display: none;
+            .toast {
+                font-size: 0.85em;
+                padding: 10px 18px;
             }
+        }
+        /* ============================================
+           NEW: Photo lightbox — click any photo to zoom.
+           Overlay only exists visually while .active; otherwise
+           opacity:0 + pointer-events:none, so it costs nothing at rest.
+        ============================================ */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
 
-            /* Larger touch targets */
-            .emoji-btn,
-            .badge,
-            .interactive-btn,
-            .music-control,
-            .progress-dot {
-                min-height: 44px; /* iOS recommended touch target */
-            }
+        .lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-overlay img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+            animation: lightboxPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes lightboxPop {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .card-profile, .profile-photo {
+            cursor: zoom-in;
+        }
+
+        /* ============================================
+           NEW: Guestbook / leave-a-wish form
+        ============================================ */
+        .guestbook-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .guestbook-input,
+        .guestbook-textarea {
+            padding: 13px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            background: rgba(120, 120, 150, 0.08);
+            font-family: var(--font-body);
+            font-size: 1em;
+            color: var(--text-strong);
+            resize: vertical;
+            transition: var(--theme-transition), border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .guestbook-textarea {
+            min-height: 90px;
+        }
+
+        .guestbook-input:focus,
+        .guestbook-textarea:focus {
+            outline: none;
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.18);
+        }
+
+        .guestbook-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 22px;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 4px;
+            text-align: left;
+        }
+
+        .guestbook-entry {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.08));
+            border-left: 4px solid var(--accent-1);
+            border-radius: 14px;
+            padding: 14px 18px;
+            animation: guestbookIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes guestbookIn {
+            from { transform: translateY(14px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .guestbook-entry-name {
+            font-weight: 700;
+            color: var(--accent-1);
+            font-size: 0.95em;
+            margin-bottom: 4px;
+        }
+
+        .guestbook-entry-msg {
+            color: var(--text-body);
+            line-height: 1.55;
+        }
+
+        .guestbook-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 6px 0;
+        }
+
+        .guestbook-note {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* ============================================
+           NEW: Konami-code easter egg — short, self-limiting
+           hue animation on the body only (a few seconds), not a
+           permanent always-on effect.
+        ============================================ */
+        .konami-active {
+            animation: konamiHue 2.5s linear 2;
+        }
+
+        @keyframes konamiHue {
+            from { filter: hue-rotate(0deg); }
+            to { filter: hue-rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Password Lock Screen -->
-    <div class="lock-screen" id="lockScreen">
-        <div class="lock-card">
-            <div class="lock-icon">🔒</div>
-            <h1>Akses Terkunci</h1>
-            <div class="lock-sub">
-                Pesan spesial ini dikunci ya kak.<br>Masukkan password untuk membukanya 🔑
-            </div>
-            <form class="lock-form" id="lockForm" autocomplete="off">
-                <input
-                    type="password"
-                    class="lock-input"
-                    id="passwordInput"
-                    placeholder="Masukkan password..."
-                    autocomplete="off"
-                    aria-label="Password"
-                >
-                <button type="submit" class="lock-btn" id="unlockBtn">Buka 🔓</button>
-                <div class="lock-error" id="lockError"></div>
-            </form>
-        </div>
+    <!-- Set the theme before anything paints, so there's no flash of the
+         wrong theme. Falls back to the OS/browser color-scheme preference;
+         no data is stored between visits (kept in-memory only). -->
+    <script>
+        (function() {
+            var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        })();
+    </script>
+
+    <!-- NEW: Scroll progress indicator -->
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBarFill"></div></div>
+
+    <!-- NEW: Light/Dark theme toggle -->
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Ganti tema terang/gelap" title="Ganti tema">
+        <span class="toggle-icon" id="themeToggleIcon">🌙</span>
+    </button>
+
+    <!-- NEW: Back to top -->
+    <button class="back-to-top" id="backToTop" type="button" aria-label="Kembali ke atas" title="Kembali ke atas">⬆️</button>
+
+    <!-- NEW: Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- NEW: Photo lightbox overlay -->
+    <div class="lightbox-overlay" id="lightboxOverlay">
+        <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Tutup">✕</button>
+        <img id="lightboxImg" src="" alt="Foto diperbesar">
     </div>
 
     <!-- Floating Particles -->
@@ -2498,7 +2168,7 @@
         <div class="sparkles" style="bottom: 25%; right: 25%; animation-delay: 1.5s;">✨</div>
         
         <div class="profile-ring">
-            <img src="https://i.ibb.co.com/BKHgv6bV/723904482-18404377084158114-6226581287366985276-n.jpg" alt="Kak Vava" class="profile-photo" width="180" height="180" decoding="async" fetchpriority="high">
+            <img src="https://i.ibb.co.com/BKHgv6bV/723904482-18404377084158114-6226581287366985276-n.jpg" alt="Kak Vava" class="profile-photo" width="180" height="180" fetchpriority="high" decoding="async" onclick="openLightbox(this.src)">
         </div>
         <div class="welcome-text">Hallo!</div>
         <div class="welcome-sub">Pesan spesial kamu kak ✨</div>
@@ -2514,10 +2184,10 @@
         <a class="progress-dot" href="#page-birthday" data-label="Ulang Tahun"></a>
         <a class="progress-dot" href="#page2" data-label="Terima Kasih"></a>
         <a class="progress-dot" href="#page3" data-label="Dedikasi"></a>
-        <a class="progress-dot" href="#page-moment" data-label="Momen Berharga"></a>
         <a class="progress-dot" href="#page4" data-label="Kenangan"></a>
         <a class="progress-dot" href="#page5" data-label="Perjalanan"></a>
         <a class="progress-dot" href="#page6" data-label="Hadiah"></a>
+        <a class="progress-dot" href="#page-guestbook" data-label="Buku Tamu"></a>
     </nav>
 
     <!-- Music Control -->
@@ -2527,10 +2197,8 @@
     </div>
 
     <!-- Audio Element -->
-    <audio id="bgMusic" loop preload="auto" playsinline>
-        <source src="The 1975 - About You.mp3" type="audio/mpeg">
-        <!-- Fallback: jika ingin gunakan musik sendiri, upload file MP3 ke folder yang sama dan uncomment baris di bawah -->
-        <!-- <source src="./music.mp3" type="audio/mpeg"> -->
+    <audio id="bgMusic" loop>
+        <source src="The 1975 - About You.mp3" type="">
     </audio>
 
     <!-- Main Content -->
@@ -2585,7 +2253,7 @@
                     📅 Jum'at, 10 Juli 2026
                 </div>
 
-                <div class="recipient">Aulia Evawani Larissa 🎈</div>
+                <div class="recipient">Kak Aulia Evawani Larissa 🎈</div>
 
                 <div class="message birthday-wishes">
                     <p class="wish-line">🎉 <strong>Selamat ulang tahun yang ke-21, Kak Vava!</strong> 🎉</p>
@@ -2608,7 +2276,7 @@
         <div class="page page2" id="page2">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
+                <img src="https://i.ibb.co.com/DPdmnqcp/Screenshot-2026-07-07-233302.png" alt="Kak Vava" class="card-profile" width="120" height="120" loading="lazy" decoding="async" onclick="openLightbox(this.src)">
                 <div class="icon icon-wave">🌟</div>
                 <h1>Terima Kasih</h1>
                 <div class="message">
@@ -2651,7 +2319,7 @@
         <div class="page page3" id="page3">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
+                <img src="https://i.ibb.co.com/hJSmyCgm/Screenshot-2026-07-07-232422.png" alt="Kak Vava" class="card-profile" width="120" height="120" loading="lazy" decoding="async" onclick="openLightbox(this.src)">
                 <div class="icon icon-wave">🙏</div>
                 <h1>Dedikasi Luar Biasa</h1>
                 <div class="message">
@@ -2667,46 +2335,6 @@
                 </ul>
             </div>
             <div class="scroll-indicator">Hampir selesai...</div>
-        </div>
-
-        <!-- Page Moment: Momen Berharga -->
-        <div class="page page-moment" id="page-moment">
-            <div class="aurora"><span></span><span></span><span></span></div>
-            <div class="card reveal-card moment-card">
-                <div class="icon icon-wave">🫂</div>
-                <h1>Momen yang Paling Berharga</h1>
-                <div class="recipient">Untuk Kak Vava, dengan tulus</div>
-
-                <div class="embrace-wrap">
-                    <span class="embrace-icon left">🤍</span>
-                    <span class="embrace-icon right">🤍</span>
-                </div>
-
-                <div class="message">
-                    Dari semua momen selama intern ini, ada satu momen yang paling membekas dan gak akan 
-                    pernah aku lupakan.
-                    <br><br>
-                    Waktu itu aku sempat sakit <strong>TBC</strong>, dan itu jadi salah satu masa paling berat 
-                    yang pernah aku lalui. Tapi di tengah semua itu, kakak adalah salah satu orang yang mau 
-                    mengulurkan tangan dan bantu aku sebisa kakak, tanpa banyak tanya, tanpa ragu.
-                </div>
-
-                <div class="moment-highlight">
-                    "Saling bekerja sama dan saling merangkul, walau apapun yang terjadi."
-                </div>
-
-                <div class="message">
-                    Buat aku, itu bukan sekadar bantuan kecil, kak. Itu bukti bahwa kerja sama yang sesungguhnya 
-                    bukan cuma soal project atau deadline, tapi soal ada satu sama lain di saat yang paling 
-                    dibutuhkan.
-                    <br><br>
-                    Terima kasih banyak, Kak Vava. Kebaikan hati dan kepedulian kakak di momen itu sangat amat 
-                    berharga buatku, dan akan selalu aku syukuri. 🤍
-                </div>
-
-                <div class="hearts">🤍 🫂 💫</div>
-            </div>
-            <div class="scroll-indicator">Lanjut ke kenangan lainnya...</div>
         </div>
 
         <!-- Page 4: Memories -->
@@ -2739,37 +2367,6 @@
                     Setiap sesi bimbingan selalu penuh insight dan inspirasi!"
                 </div>
 
-                <div class="message" style="margin-top: 10px;">
-                    📸 Galeri kenangan <em>(placeholder — nanti diganti foto kita berdua yaa!)</em>
-                </div>
-                <div class="gallery-3d">
-                    <div class="gallery-frame">
-                        <div class="gallery-frame-inner">
-                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🎯</span>Hari Pertama</div>
-                            <div class="gallery-frame-face gallery-frame-back">Onboarding bareng!</div>
-                        </div>
-                    </div>
-                    <div class="gallery-frame">
-                        <div class="gallery-frame-inner">
-                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🎨</span>Project Time</div>
-                            <div class="gallery-frame-face gallery-frame-back">Ngerjain project bareng</div>
-                        </div>
-                    </div>
-                    <div class="gallery-frame">
-                        <div class="gallery-frame-inner">
-                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🤍</span>Saling Bantu</div>
-                            <div class="gallery-frame-face gallery-frame-back">Selalu ada satu sama lain</div>
-                        </div>
-                    </div>
-                    <div class="gallery-frame">
-                        <div class="gallery-frame-inner">
-                            <div class="gallery-frame-face gallery-frame-front"><span class="emoji-big">🎉</span>Hari Terakhir</div>
-                            <div class="gallery-frame-face gallery-frame-back">Perpisahan yang berkesan</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-caption">💡 Arahkan kursor / sentuh foto untuk membalik kartu</div>
-
                 <div class="badges">
                     <div class="badge tooltip" onclick="celebrateBadge(this)">
                         🌟 Mentor Terbaik
@@ -2796,7 +2393,7 @@
         <div class="page page5" id="page5">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
+                <img src="https://i.ibb.co.com/hFP6jQyw/Screenshot-2026-07-07-233745.png" alt="Kak Vava" class="card-profile" width="120" height="120" loading="lazy" decoding="async" onclick="openLightbox(this.src)">
                 <div class="icon icon-wave">🗓️</div>
                 <h1>Perjalanan Kita</h1>
                 <div class="message">
@@ -2825,13 +2422,6 @@
                             belajar banyak tentang profesionalisme dan teamwork!
                         </div>
                     </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">🤍 Saat yang Berat</div>
-                        <div class="timeline-content">
-                            Di satu titik aku sempat jatuh sakit, dan kakak jadi salah satu orang yang 
-                            paling bantu aku waktu itu. Momen itu ngajarin aku arti kerja sama yang sesungguhnya.
-                        </div>
-                    </div>
                 </div>
 
                 <div class="hearts">💖 ✨ 🌟</div>
@@ -2843,7 +2433,7 @@
         <div class="page page6" id="page6">
             <div class="aurora"><span></span><span></span><span></span></div>
             <div class="card reveal-card">
-                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile photo-3d" width="120" height="120" loading="lazy" decoding="async">
+                <img src="https://i.ibb.co.com/xtHdpX8Y/Chat-GPT-Image-7-Jul-2026-23-45-03.png" alt="Kak Vava" class="card-profile" width="120" height="120" loading="lazy" decoding="async" onclick="openLightbox(this.src)">
                 <div class="icon icon-wave">🎁</div>
                 <h1>Hadiah Kecil</h1>
                 <div class="message">
@@ -2876,21 +2466,125 @@
                     <br><br>
                     <strong>~ Muhammad Fawwaz Rayyan Khalish ~</strong>
                 </div>
+
+                <button class="interactive-btn" id="shareBtn" type="button" onclick="sharePage()">🔗 Bagikan Halaman Ini</button>
+            </div>
+            <div class="scroll-indicator">Tinggalkan pesan yuk...</div>
+        </div>
+
+        <!-- NEW: Guestbook page -->
+        <div class="page page6" id="page-guestbook">
+            <div class="aurora"><span></span><span></span><span></span></div>
+            <div class="card reveal-card">
+                <div class="icon icon-wave">📝</div>
+                <h1>Buku Tamu</h1>
+                <div class="recipient">Tinggalkan pesan untuk Kak Vava</div>
+                <div class="message">
+                    Kalau kamu punya ucapan, doa, atau kenangan yang mau ditambahkan? Tulis di sini yaa! ✨
+                </div>
+
+                <form class="guestbook-form" id="guestbookForm">
+                    <input type="text" class="guestbook-input" id="guestbookName" placeholder="Nama kamu" maxlength="40" required>
+                    <textarea class="guestbook-textarea" id="guestbookMessage" placeholder="Tulis pesan kamu di sini..." maxlength="300" required></textarea>
+                    <button type="submit" class="interactive-btn" id="guestbookSubmitBtn">💌 Kirim Pesan</button>
+                </form>
+
+                <div class="guestbook-list" id="guestbookList">
+                    <div class="guestbook-empty" id="guestbookEmpty">Belum ada pesan. Jadilah yang pertama! 💫</div>
+                </div>
+
+                <div class="guestbook-note" id="guestbookNote">Catatan: pesan hanya tampil selama kamu membuka halaman ini dan tidak tersimpan setelah ditutup.</div>
             </div>
         </div>
     </div>
 
     <script>
-        /* Create floating particles - optimized */
+        // Respect users who asked the OS/browser for reduced motion, and pause
+        // decorative work while the tab isn't visible (saves battery/CPU).
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isLowPower = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+
+        // ===================================================================
+        // NEW: Toast notifications — lightweight, non-blocking replacement
+        // for alert()/confirm() popups (those freeze the page and feel dated).
+        // ===================================================================
+        const toastContainer = document.getElementById('toastContainer');
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 2600);
+        }
+
+        // ===================================================================
+        // NEW: Light/Dark theme toggle. No localStorage/cookies are used —
+        // it defaults to the visitor's OS preference each time the page
+        // loads (set by the inline script at the top of <body>) and can be
+        // switched for the current visit with this button.
+        // ===================================================================
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleIcon = document.getElementById('themeToggleIcon');
+        const htmlEl = document.documentElement;
+
+        function setThemeIcon(theme) {
+            themeToggleIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+        setThemeIcon(htmlEl.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', function() {
+            const next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', next);
+
+            // restart the little spin-in animation on the icon
+            themeToggleIcon.style.animation = 'none';
+            // eslint-disable-next-line no-unused-expressions
+            themeToggleIcon.offsetHeight; // force reflow so the animation replays
+            themeToggleIcon.style.animation = '';
+            setThemeIcon(next);
+
+            showToast(next === 'dark' ? '🌙 Mode gelap aktif' : '☀️ Mode terang aktif');
+            if (!prefersReducedMotion) createConfetti(isLowPower ? 8 : 16);
+        });
+
+        // ===================================================================
+        // NEW: Scroll progress bar + back-to-top button.
+        // Both driven by ONE scroll listener, throttled to one update per
+        // animation frame, and reading only window.scrollY (no layout-
+        // forcing getBoundingClientRect calls) — cheap even on long pages.
+        // ===================================================================
+        const progressBarFill = document.getElementById('progressBarFill');
+        const backToTop = document.getElementById('backToTop');
+        let scrollTicking = false;
+
+        function updateScrollUI() {
+            scrollTicking = false;
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBarFill.style.width = pct + '%';
+            backToTop.classList.toggle('visible', scrollTop > window.innerHeight * 0.6);
+        }
+
+        window.addEventListener('scroll', function() {
+            if (!scrollTicking) {
+                scrollTicking = true;
+                requestAnimationFrame(updateScrollUI);
+            }
+        }, { passive: true });
+        updateScrollUI();
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        });
+
+        // Create floating particles
         const particlesContainer = document.getElementById('particles');
         const emojis = ['✨', '💖', '⭐', '💫', '🌟', '💝', '🎨', '🎉', '🎂', '🎈', '🎁', '🎊'];
-        let particleCount = 0;
-        const maxParticles = 15; // Limit max particles for performance
-        
+        const MAX_PARTICLES = isLowPower ? 10 : 18;
+
         function createParticle() {
-            if (particleCount >= maxParticles) return;
-            if (document.body.classList.contains('is-scrolling')) return; // don't add DOM work while scrolling
-            
+            if (document.hidden || particlesContainer.childElementCount >= MAX_PARTICLES) return;
             const particle = document.createElement('div');
             particle.className = 'particle';
             particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
@@ -2898,26 +2592,21 @@
             particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
             particle.style.animationDelay = Math.random() * 2 + 's';
             particlesContainer.appendChild(particle);
-            particleCount++;
             
-            setTimeout(() => {
-                particle.remove();
-                particleCount--;
-            }, 8000);
+            setTimeout(() => particle.remove(), 8000);
         }
         
-        // Particle interval is started from startExperience() after unlock
+        if (!prefersReducedMotion) {
+            setInterval(createParticle, isLowPower ? 1500 : 900);
+        }
 
-        /* Floating balloons - optimized */
+        // Floating balloons
         const balloonColors = ['#ff6b9d', '#ffc371', '#667eea', '#43e97b', '#f5576c', '#4facfe', '#fee140'];
         const balloonsLayer = document.getElementById('balloonsLayer');
-        let balloonCount = 0;
-        const maxBalloons = 8; // Limit max balloons
+        const MAX_BALLOONS = isLowPower ? 5 : 8;
 
         function createBalloon() {
-            if (balloonCount >= maxBalloons) return;
-            if (document.body.classList.contains('is-scrolling')) return; // don't add DOM work while scrolling
-            
+            if (document.hidden || balloonsLayer.childElementCount >= MAX_BALLOONS) return;
             const balloon = document.createElement('div');
             balloon.className = 'balloon';
             balloon.style.left = Math.random() * 100 + '%';
@@ -2926,35 +2615,19 @@
             balloon.style.setProperty('--spin', (Math.random() * 30 - 15) + 'deg');
             balloon.style.animationDuration = (Math.random() * 6 + 8) + 's';
             balloonsLayer.appendChild(balloon);
-            balloonCount++;
-            
-            setTimeout(() => {
-                balloon.remove();
-                balloonCount--;
-            }, 15000);
+            setTimeout(() => balloon.remove(), 15000);
         }
 
-        // Balloon interval + initial balloons are started from startExperience() after unlock
+        if (!prefersReducedMotion) {
+            setInterval(createBalloon, isLowPower ? 4000 : 2800);
+            for (let i = 0; i < 5; i++) setTimeout(createBalloon, i * 400);
+        }
 
-        // Confetti burst (rate-limited to prevent lag)
+        // Confetti burst
         const confettiColors = ['#ff6b9d', '#ffc371', '#667eea', '#43e97b', '#f5576c', '#fee140', '#4facfe'];
-        let confettiSpawned = 0;
-        const confettiSpawnLimit = 180; // max active confetti per session-ish
-        const confettiCooldownMs = 1200;
-        let lastConfettiAt = 0;
 
         function createConfetti(count = 60, originX = null) {
-            const now = performance.now();
-            if (now - lastConfettiAt < confettiCooldownMs) return;
-            lastConfettiAt = now;
-
-            const allowed = Math.max(0, confettiSpawnLimit - confettiSpawned);
-            if (allowed <= 0) return;
-
-            const realCount = Math.min(count, allowed);
-            confettiSpawned += realCount;
-
-            for (let i = 0; i < realCount; i++) {
+            for (let i = 0; i < count; i++) {
                 setTimeout(() => {
                     const piece = document.createElement('div');
                     piece.className = 'confetti-piece';
@@ -2965,14 +2638,10 @@
                     piece.style.height = (Math.random() * 8 + 6) + 'px';
                     piece.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
                     document.body.appendChild(piece);
-                    setTimeout(() => {
-                        piece.remove();
-                        confettiSpawned = Math.max(0, confettiSpawned - 1);
-                    }, 5000);
-                }, i * 18);
+                    setTimeout(() => piece.remove(), 5000);
+                }, i * 30);
             }
         }
-
 
         // Fireworks
         const fireworksLayer = document.getElementById('fireworksLayer');
@@ -3017,163 +2686,63 @@
             }
         }
 
-        // Auto-trigger birthday effects when page scrolls into view - optimized
-        let birthdayTriggered = false;
+        // Auto-trigger birthday effects when page scrolls into view.
+        // Uses IntersectionObserver instead of a scroll listener: the browser
+        // handles the visibility check off the main thread, so no layout is
+        // forced on every scroll frame.
         const birthdayPage = document.getElementById('page-birthday');
 
-        function triggerBirthdayEffects() {
-            if (birthdayTriggered) return;
-            birthdayTriggered = true;
-            createConfetti(50);
-            fireworkShow(6);
-            document.querySelectorAll('.wish-line').forEach((line, i) => {
-                setTimeout(() => line.classList.add('visible'), i * 400);
-            });
-        }
-
-        if (birthdayPage && 'IntersectionObserver' in window) {
+        if (birthdayPage) {
             const birthdayObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (entry.isIntersecting) triggerBirthdayEffects();
-                });
-            }, { rootMargin: '0px 0px -40% 0px', threshold: 0.01 });
-            birthdayObserver.observe(birthdayPage);
-        } else {
-            // fallback: old scroll detection (kept only for environments without IO)
-            function checkBirthdayPage() {
-                if (birthdayTriggered || !birthdayPage) return;
-                const rect = birthdayPage.getBoundingClientRect();
-                if (rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.2) {
-                    triggerBirthdayEffects();
-                }
-            }
-            window.addEventListener('scroll', checkBirthdayPage, { passive: true });
-        }
-
-        // Card reveal (IntersectionObserver only, avoids scroll listener jank)
-        const revealCardsEls = document.querySelectorAll('.card.reveal-card');
-        if ('IntersectionObserver' in window) {
-            const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        revealObserver.unobserve(entry.target);
+                        createConfetti(prefersReducedMotion ? 0 : 50);
+                        fireworkShow(prefersReducedMotion ? 0 : 6);
+                        document.querySelectorAll('.wish-line').forEach((line, i) => {
+                            setTimeout(() => line.classList.add('visible'), i * 400);
+                        });
+                        birthdayObserver.disconnect();
                     }
                 });
-            }, { rootMargin: '0px 0px -20% 0px', threshold: 0.01 });
-
-            revealCardsEls.forEach(el => {
-                if (!el.classList.contains('visible')) revealObserver.observe(el);
-            });
-        } else {
-            // If IO is not supported, keep last-resort behaviour.
-            // (This project targets modern browsers, so this path is rarely used.)
-            let scrollTimeout;
-            function revealCards() {
-                if (scrollTimeout) return;
-                scrollTimeout = setTimeout(() => {
-                    scrollTimeout = null;
-                    document.querySelectorAll('.card.reveal-card:not(.visible)').forEach(card => {
-                        const rect = card.getBoundingClientRect();
-                        if (rect.top < window.innerHeight - 80) card.classList.add('visible');
-                    });
-                }, 120);
-            }
-            window.addEventListener('scroll', revealCards, { passive: true });
+            }, { threshold: 0.35 });
+            birthdayObserver.observe(birthdayPage);
         }
 
+        // Card reveal on scroll
+        const revealCardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealCardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0, rootMargin: '0px 0px -80px 0px' });
 
+        document.querySelectorAll('.card.reveal-card').forEach(card => revealCardObserver.observe(card));
 
-        // Music control with better mobile handling
+        // Music control
         const bgMusic = document.getElementById('bgMusic');
         const musicIcon = document.getElementById('musicIcon');
         const musicText = document.getElementById('musicText');
         let isPlaying = false;
-        let userInteracted = false;
 
-        // Enable audio after user interaction (required by mobile browsers)
-        function enableAudio() {
-            if (!userInteracted || !isPlaying) {
-                userInteracted = true;
-                bgMusic.muted = false;
-                bgMusic.play().then(() => {
-                    isPlaying = true;
-                    musicIcon.textContent = '🎵';
-                    musicText.textContent = 'Playing...';
-                }).catch(e => {
-                    console.log('Autoplay prevented, waiting for user interaction');
-                    isPlaying = false;
-                    musicIcon.textContent = '🔇';
-                    musicText.textContent = 'Tap to Play';
-                });
-            }
-        }
-
-        /* ===== Robust autoplay: try to play WITH sound first (works when called
-           synchronously inside a real click/submit gesture, e.g. the password button).
-           If the browser still blocks it (autoplay policy on a page load with no gesture),
-           fall back to the "muted autoplay -> unmute right after" trick, which is allowed
-           by virtually every browser, so the music still starts on its own. ===== */
-        function attemptAutoplay() {
-            if (isPlaying) return;
-            bgMusic.muted = false;
-            const playPromise = bgMusic.play();
-            if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.then(() => {
-                    isPlaying = true;
-                    userInteracted = true;
-                    musicIcon.textContent = '🎵';
-                    musicText.textContent = 'Playing...';
-                }).catch(() => {
-                    // Fallback: autoplay muted (always allowed), then unmute right away
-                    bgMusic.muted = true;
-                    bgMusic.play().then(() => {
-                        isPlaying = true;
-                        musicIcon.textContent = '🔈';
-                        musicText.textContent = 'Playing...';
-                        setTimeout(() => {
-                            bgMusic.muted = false;
-                            musicIcon.textContent = '🎵';
-                        }, 300);
-                    }).catch(() => {
-                        isPlaying = false;
-                        musicIcon.textContent = '🔇';
-                        musicText.textContent = 'Tap to Play';
-                    });
-                });
-            } else {
-                isPlaying = true;
-            }
-        }
-        // Extra safety net: the very first interaction of any kind (click, touch, key,
-        // or even the first scroll) will force sound on if it isn't already playing.
-        ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt => {
-            document.addEventListener(evt, () => {
-                if (!isPlaying || bgMusic.muted) enableAudio();
-            }, { once: true, passive: true });
-        });
+        // Auto play music after welcome screen
+        setTimeout(() => {
+            bgMusic.play().catch(e => console.log('Autoplay prevented'));
+            isPlaying = true;
+        }, 4500);
 
         function toggleMusic() {
-            if (!userInteracted) {
-                enableAudio();
-                return;
-            }
-
             if (isPlaying) {
                 bgMusic.pause();
                 musicIcon.textContent = '🔇';
                 musicText.textContent = 'Paused';
                 isPlaying = false;
             } else {
-                bgMusic.play().then(() => {
-                    musicIcon.textContent = '🎵';
-                    musicText.textContent = 'Playing...';
-                    isPlaying = true;
-                }).catch(e => {
-                    console.error('Play failed:', e);
-                    musicIcon.textContent = '🔇';
-                    musicText.textContent = 'Tap to Play';
-                });
+                bgMusic.play();
+                musicIcon.textContent = '🎵';
+                musicText.textContent = 'Playing...';
+                isPlaying = true;
             }
         }
 
@@ -3224,18 +2793,19 @@
         // Surprise button
         function showSurprise() {
             const messages = [
-                '💖 Kamu luar biasa, udah bisa sabar menjalani ini semua dan melangkah sejauh ini, teruslah berkembang!',
-                '🌟 So proud of you!',
-                '✨ You\'re the best mentor, jyujur!',
-                '🎨 Keep being amazing kak, terus jadi orang keren yaa!',
-                '💫 Terima kasih banyak pokoknya huaaaaaa😭🤩!'
+                '💖 Jujur, kmu luar biasa karena sudah sampai di titik ini kakkk!',
+                '🌟 Thank you for everything pokoknya huaaa!',
+                '✨ I mean you\'re the best mentor!',
+                '🎨 Keep being amazing lah pokoknya!',
+                '💫 Semoga cita-citamu dapat tercapaikan yaa, aamiinn......'
             ];
             
             const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            alert(randomMessage);
+            showToast(randomMessage);
             
             // Create burst of hearts
-            for (let i = 0; i < 20; i++) {
+            const heartCount = prefersReducedMotion ? 0 : (isLowPower ? 10 : 20);
+            for (let i = 0; i < heartCount; i++) {
                 setTimeout(() => {
                     const heart = document.createElement('div');
                     heart.className = 'floating-heart';
@@ -3248,165 +2818,262 @@
             }
         }
 
-        /* ===== Performance: mark body as "is-scrolling" so heavy blur/animation effects
-           pause automatically during scroll, then resume shortly after scroll stops. ===== */
-        let scrollRAF = null;
-        let scrollEndTimer = null;
-        function handleScrollState() {
-            if (!document.body.classList.contains('is-scrolling')) {
-                document.body.classList.add('is-scrolling');
-            }
-            if (scrollEndTimer) clearTimeout(scrollEndTimer);
-            scrollEndTimer = setTimeout(() => {
-                document.body.classList.remove('is-scrolling');
-            }, 160);
-        }
-        window.addEventListener('scroll', () => {
-            if (scrollRAF) return;
-            scrollRAF = requestAnimationFrame(() => {
-                scrollRAF = null;
-                handleScrollState();
-            });
-        }, { passive: true });
+        // Parallax effect on mouse move — only on devices that actually have
+        // a mouse (skips phones/tablets entirely), and throttled to one
+        // update per animation frame instead of one per pixel of movement.
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (canHover && !prefersReducedMotion) {
+            const parallaxCards = Array.from(document.querySelectorAll('.card'));
+            let latestEvent = null;
+            let parallaxTicking = false;
 
-        /* Parallax effect on mouse move - optimized */
-        let mouseMoveTimeout;
-        let cachedCards = null;
-        document.addEventListener('mousemove', function(e) {
-            // Skip entirely while the user is scrolling to keep scroll smooth
-            if (document.body.classList.contains('is-scrolling')) return;
-            // Throttle mousemove for better performance
-            if (mouseMoveTimeout) return;
-
-            mouseMoveTimeout = setTimeout(() => {
-                mouseMoveTimeout = null;
-                if (!cachedCards) cachedCards = document.querySelectorAll('.card');
-                const moveX = (e.clientX - window.innerWidth / 2) / 80; // Reduced from 60
-                const moveY = (e.clientY - window.innerHeight / 2) / 80; // Reduced from 60
-
-                cachedCards.forEach(card => {
+            function applyParallax() {
+                parallaxTicking = false;
+                if (!latestEvent) return;
+                const moveX = (latestEvent.clientX - window.innerWidth / 2) / 60;
+                const moveY = (latestEvent.clientY - window.innerHeight / 2) / 60;
+                parallaxCards.forEach(card => {
                     if (card.matches(':hover')) return;
                     card.style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
                 });
-            }, 50); // Throttle to every 50ms
+            }
+
+            document.addEventListener('mousemove', function(e) {
+                latestEvent = e;
+                if (!parallaxTicking) {
+                    parallaxTicking = true;
+                    requestAnimationFrame(applyParallax);
+                }
+            }, { passive: true });
+        }
+
+        // Progress nav - highlight active section, and scroll-reveal for
+        // timeline items/badges/stats. Both driven by IntersectionObserver
+        // so the browser does the visibility math off the main thread —
+        // no getBoundingClientRect() calls stacking up on every scroll tick.
+        const progressDots = document.querySelectorAll('.progress-dot');
+        const allPages = document.querySelectorAll('.page');
+
+        const progressNavObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const index = Array.from(allPages).indexOf(entry.target);
+                if (entry.isIntersecting) {
+                    progressDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                }
+            });
+        }, { threshold: 0.5 });
+
+        allPages.forEach(page => progressNavObserver.observe(page));
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0, rootMargin: '0px 0px -150px 0px' });
+
+        document.querySelectorAll('.timeline-item, .badge, .stat-item').forEach(el => revealObserver.observe(el));
+
+        // ===================================================================
+        // NEW: Photo lightbox
+        // ===================================================================
+        const lightboxOverlay = document.getElementById('lightboxOverlay');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        function openLightbox(src) {
+            lightboxImg.src = src;
+            lightboxOverlay.classList.add('active');
+        }
+
+        function closeLightbox() {
+            lightboxOverlay.classList.remove('active');
+        }
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxOverlay.addEventListener('click', function(e) {
+            if (e.target === lightboxOverlay) closeLightbox();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
         });
 
-        /* 3D cursor-tilt on cards (desktop only, respects reduced motion) */
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const supportsFineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        // ===================================================================
+        // NEW: Guestbook backed by real persistent storage.
+        // Uses window.storage (shared = true) so every visitor's message is
+        // saved to a real database and everyone who opens the page sees the
+        // same guestbook — not just messages from their own visit.
+        // All entries are combined into ONE key ("guestbook-entries") so we
+        // don't hammer the storage API with a separate call per message.
+        // If window.storage isn't available (e.g. the file is opened
+        // outside Claude, straight from disk or another host), it falls
+        // back automatically to session-only storage so the form still works.
+        // ===================================================================
+        const guestbookForm = document.getElementById('guestbookForm');
+        const guestbookList = document.getElementById('guestbookList');
+        const guestbookEmpty = document.getElementById('guestbookEmpty');
+        const guestbookNote = document.getElementById('guestbookNote');
+        const guestbookSubmitBtn = document.getElementById('guestbookSubmitBtn');
+        const GUESTBOOK_KEY = 'guestbook-entries';
+        const hasPersistentStorage = !!(window.storage && typeof window.storage.get === 'function');
+        let guestbookEntriesCache = [];
 
-        if (!prefersReducedMotion && supportsFineHover) {
-            document.querySelectorAll('.card').forEach(card => {
-                card.addEventListener('mousemove', function(e) {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const rotateX = ((y - rect.height / 2) / rect.height) * -8;
-                    const rotateY = ((x - rect.width / 2) / rect.width) * 8;
-                    card.style.transform = `perspective(1400px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.015)`;
-                });
-                card.addEventListener('mouseleave', function() {
-                    card.style.transform = '';
-                });
+        if (guestbookNote) {
+            guestbookNote.textContent = hasPersistentStorage
+                ? 'Pesan tersimpan permanen dan bisa dilihat semua orang yang membuka halaman ini. 💾'
+                : 'Mode offline: penyimpanan permanen tidak tersedia di sini, pesan hanya tampil selama halaman ini terbuka.';
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function renderGuestbookList(entries) {
+            guestbookList.querySelectorAll('.guestbook-entry').forEach(el => el.remove());
+            if (guestbookEmpty) guestbookEmpty.style.display = entries.length ? 'none' : 'block';
+
+            // newest first
+            entries.slice().reverse().forEach(entry => {
+                const el = document.createElement('div');
+                el.className = 'guestbook-entry';
+                el.innerHTML =
+                    '<div class="guestbook-entry-name">' + escapeHtml(entry.name) + '</div>' +
+                    '<div class="guestbook-entry-msg">' + escapeHtml(entry.message) + '</div>';
+                guestbookList.appendChild(el);
             });
         }
 
-        /* Parallax depth on aurora background per page (disabled for scroll performance) */
-        // sebelumnya memakai scroll listener + getBoundingClientRect.
-        // Sekarang dinonaktifkan agar scroll lebih smooth.
-
-        // Progress nav - highlight active section (IntersectionObserver)
-        const progressDots = document.querySelectorAll('.progress-dot');
-        const pagesForDots = Array.from(document.querySelectorAll('.page'));
-
-        if ('IntersectionObserver' in window) {
-            const pageObserver = new IntersectionObserver((entries) => {
-                // pilih entry yang paling terlihat
-                const visible = entries
-                    .filter(e => e.isIntersecting)
-                    .sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0));
-
-                if (visible.length === 0) return;
-
-                const activePage = visible[0].target;
-                const idx = pagesForDots.indexOf(activePage);
-                if (idx < 0) return;
-
-                progressDots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === idx);
-                });
-            }, { rootMargin: '0px 0px -50% 0px', threshold: [0.01, 0.1, 0.25, 0.5] });
-
-            pagesForDots.forEach(p => pageObserver.observe(p));
-        } else {
-            // fallback: kalau IO tidak ada, tetap nonaktifkan update progress berbasis scroll
-            // (lebih ringan dan menghindari lag)
-            progressDots.forEach((dot, i) => dot.classList.toggle('active', i === 0));
+        async function loadGuestbook() {
+            if (!hasPersistentStorage) return;
+            if (guestbookEmpty) guestbookEmpty.textContent = 'Memuat pesan...';
+            try {
+                const result = await window.storage.get(GUESTBOOK_KEY, true);
+                guestbookEntriesCache = result && result.value ? JSON.parse(result.value) : [];
+            } catch (err) {
+                // key doesn't exist yet (no messages sent so far) — not a real error
+                guestbookEntriesCache = [];
+            }
+            if (guestbookEmpty) guestbookEmpty.textContent = 'Belum ada pesan. Jadilah yang pertama! 💫';
+            renderGuestbookList(guestbookEntriesCache);
         }
 
-        // Scroll reveal animation - replaced by IntersectionObserver
-        function reveal() {
-            // no-op: implementasi diganti observer di bawah agar tidak ada listener scroll berat
+        guestbookForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('guestbookName');
+            const messageInput = document.getElementById('guestbookMessage');
+            const name = nameInput.value.trim();
+            const message = messageInput.value.trim();
+            if (!name || !message) return;
+
+            const entry = { name, message, ts: Date.now() };
+
+            if (guestbookSubmitBtn) {
+                guestbookSubmitBtn.disabled = true;
+                guestbookSubmitBtn.textContent = 'Mengirim...';
+            }
+
+            try {
+                if (hasPersistentStorage) {
+                    // Re-fetch right before writing to minimize (not fully
+                    // eliminate) the chance of clobbering another visitor's
+                    // message submitted at nearly the same moment.
+                    try {
+                        const latest = await window.storage.get(GUESTBOOK_KEY, true);
+                        guestbookEntriesCache = latest && latest.value ? JSON.parse(latest.value) : [];
+                    } catch (err) {
+                        guestbookEntriesCache = [];
+                    }
+                    guestbookEntriesCache.push(entry);
+                    await window.storage.set(GUESTBOOK_KEY, JSON.stringify(guestbookEntriesCache), true);
+                } else {
+                    guestbookEntriesCache.push(entry);
+                }
+
+                renderGuestbookList(guestbookEntriesCache);
+                showToast('💌 Pesan terkirim, terima kasih!');
+                if (!prefersReducedMotion) createConfetti(isLowPower ? 6 : 14);
+                guestbookForm.reset();
+            } catch (err) {
+                showToast('⚠️ Gagal mengirim pesan, coba lagi ya');
+            } finally {
+                if (guestbookSubmitBtn) {
+                    guestbookSubmitBtn.disabled = false;
+                    guestbookSubmitBtn.textContent = '💌 Kirim Pesan';
+                }
+            }
+        });
+
+        loadGuestbook();
+
+
+        // ===================================================================
+        // NEW: Share button — uses the native share sheet on devices that
+        // support it, falls back to copying the link on desktop browsers.
+        // ===================================================================
+        function sharePage() {
+            const shareData = {
+                title: document.title,
+                text: 'Sebuah pesan spesial untuk Kak Vava 💖',
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => {});
+            } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href)
+                    .then(() => showToast('🔗 Link disalin ke clipboard!'))
+                    .catch(() => showToast('Gagal menyalin link'));
+            } else {
+                showToast('🔗 ' + window.location.href);
+            }
         }
 
-        if ('IntersectionObserver' in window) {
-            const revealEls = document.querySelectorAll('.timeline-item, .badge, .stat-item');
-            const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('active');
-                });
-            }, { rootMargin: '0px 0px -20% 0px', threshold: 0.01 });
+        // ===================================================================
+        // NEW: Konami code easter egg (↑ ↑ ↓ ↓ ← → ← → B A). A small,
+        // self-limiting reward — a couple seconds of hue-shift plus a
+        // confetti burst, not a permanent effect.
+        // ===================================================================
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiProgress = 0;
 
-            revealEls.forEach(el => {
-                if (!el.classList.contains('active')) revealObserver.observe(el);
-            });
-        } else {
-            // fallback minimal (tanpa perhitungan bounding rect)
-            document.querySelectorAll('.timeline-item, .badge, .stat-item').forEach(el => el.classList.add('active'));
-        }
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+            konamiProgress = (key === konamiSequence[konamiProgress]) ? konamiProgress + 1 : 0;
+            if (konamiProgress === konamiSequence.length) {
+                konamiProgress = 0;
+                showToast('🎮 Easter egg ditemukan! Selamat!');
+                if (!prefersReducedMotion) {
+                    document.body.classList.add('konami-active');
+                    createConfetti(isLowPower ? 25 : 60);
+                    setTimeout(() => document.body.classList.remove('konami-active'), 5000);
+                }
+            }
+        });
 
-
-        /* ===== Performance: pause off-screen page animations via IntersectionObserver ===== */
-        const allPageEls = document.querySelectorAll('.page');
-        if ('IntersectionObserver' in window) {
-            const pageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    entry.target.classList.toggle('in-view', entry.isIntersecting);
-                });
-            }, { rootMargin: '150px 0px', threshold: 0.01 });
-            allPageEls.forEach(page => pageObserver.observe(page));
-        } else {
-            // Fallback: keep everything visible/animated if IntersectionObserver isn't supported
-            allPageEls.forEach(page => page.classList.add('in-view'));
-        }
-
-        /* ===== Experience start — only runs after password is verified ===== */
-        let experienceStarted = false;
-
-        function startExperience() {
-            if (experienceStarted) return;
-            experienceStarted = true;
-
-            // Particle + balloon loops
-            setInterval(createParticle, 1200);
-            for (let i = 0; i < 8; i++) {
+        // Page load setup
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create a few particles on page load
+            const initialParticles = prefersReducedMotion ? 0 : (isLowPower ? 4 : 8);
+            for (let i = 0; i < initialParticles; i++) {
                 setTimeout(createParticle, i * 200);
             }
-            setInterval(createBalloon, 3500);
-            for (let i = 0; i < 3; i++) setTimeout(createBalloon, i * 600);
-
-            // Initial reveal check
-            reveal();
-            revealCards();
-            checkBirthdayPage();
 
             // Confetti on welcome screen exit
-            setTimeout(() => createConfetti(40), 4200);
+            if (!prefersReducedMotion) {
+                setTimeout(() => createConfetti(isLowPower ? 20 : 40), 4200);
+            }
 
-            // Music: attempt autoplay right away (muted-fallback trick if needed).
-            // The extra 'click/touchstart/keydown/scroll' safety net registered above
-            // will also kick sound on at the very first interaction if this gets blocked.
-            attemptAutoplay();
+            // Fully remove the welcome screen from the render tree once its
+            // fade-out finishes, so its background animations stop costing
+            // CPU/GPU for the rest of the visit.
+            const welcomeScreen = document.querySelector('.welcome-screen');
+            if (welcomeScreen) {
+                setTimeout(() => { welcomeScreen.style.display = 'none'; }, 5100);
+            }
 
             // Add hover effects to profile photos
             const profilePhotos = document.querySelectorAll('.card-profile, .profile-photo');
@@ -3416,69 +3083,7 @@
                     setTimeout(() => this.classList.remove('shake'), 500);
                 });
             });
-        }
-
-        /* ===== Password lock screen ===== */
-        function initLockScreen() {
-            const lockScreen = document.getElementById('lockScreen');
-            const lockCard = lockScreen ? lockScreen.querySelector('.lock-card') : null;
-            const lockForm = document.getElementById('lockForm');
-            const passwordInput = document.getElementById('passwordInput');
-            const lockError = document.getElementById('lockError');
-            const CORRECT_PASSWORD = 'Aulia_GE';
-
-            function unlock() {
-                try { localStorage.setItem('vava_unlocked', '1'); } catch (e) {}
-                document.documentElement.classList.remove('locked');
-                document.body.classList.remove('locked');
-                document.body.classList.add('unlocked');
-                if (lockScreen) lockScreen.classList.add('is-unlocked');
-                setTimeout(() => { if (lockScreen) lockScreen.style.display = 'none'; }, 700);
-                // Called synchronously inside the submit/click gesture so the browser
-                // treats it as a real user interaction and allows sound immediately.
-                attemptAutoplay();
-                startExperience();
-            }
-
-            function tryUnlock() {
-                if (!passwordInput) return;
-                if (passwordInput.value === CORRECT_PASSWORD) {
-                    unlock();
-                } else {
-                    if (lockError) lockError.textContent = 'Passwordnya salah, coba lagi yaa 🙏';
-                    if (lockCard) {
-                        lockCard.classList.add('shake');
-                        setTimeout(() => lockCard.classList.remove('shake'), 500);
-                    }
-                    passwordInput.value = '';
-                    passwordInput.focus();
-                }
-            }
-
-            if (lockForm) {
-                lockForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    tryUnlock();
-                });
-            }
-
-            let alreadyUnlocked = false;
-            try { alreadyUnlocked = localStorage.getItem('vava_unlocked') === '1'; } catch (e) {}
-
-            if (alreadyUnlocked) {
-                document.documentElement.classList.remove('locked');
-                document.body.classList.remove('locked');
-                document.body.classList.add('unlocked');
-                if (lockScreen) lockScreen.style.display = 'none';
-                startExperience();
-            } else {
-                document.documentElement.classList.add('locked');
-                document.body.classList.add('locked');
-                if (passwordInput) passwordInput.focus();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initLockScreen);
+        });
     </script>
 </body>
 </html>

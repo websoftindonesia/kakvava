@@ -2493,7 +2493,7 @@
                     <div class="guestbook-empty" id="guestbookEmpty">Belum ada pesan. Jadilah yang pertama! 💫</div>
                 </div>
 
-                <div class="guestbook-note" id="guestbookNote">Catatan: pesan hanya tampil selama kamu membuka halaman ini dan tidak tersimpan setelah ditutup.</div>
+                <div class="guestbook-note" id="guestbookNote">💾 Pesan tersimpan permanen di browser. Data akan tetap ada meskipun halaman di-refresh!</div>
             </div>
         </div>
     </div>
@@ -2726,11 +2726,36 @@
         const musicText = document.getElementById('musicText');
         let isPlaying = false;
 
-        // Auto play music after welcome screen
+        // Auto play music on first user interaction (click/touch/scroll) after welcome screen
+        // This works around browser autoplay restrictions
+        let musicStarted = false;
+
+        function startMusic() {
+            if (musicStarted) return;
+            musicStarted = true;
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicIcon.textContent = '🎵';
+                musicText.textContent = 'Playing...';
+            }).catch(() => {
+                // If still fails, try once more on next interaction
+                musicStarted = false;
+            });
+        }
+
+        // Try autoplay after welcome screen (may be blocked)
         setTimeout(() => {
-            bgMusic.play().catch(e => console.log('Autoplay prevented'));
-            isPlaying = true;
+            bgMusic.play().then(() => {
+                isPlaying = true;
+            }).catch(() => {
+                // Autoplay blocked - will start on user interaction
+            });
         }, 4500);
+
+        // Start music on ANY user interaction (click, touch, scroll, keypress)
+        ['click', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+            document.addEventListener(evt, startMusic, { once: false, passive: true });
+        });
 
         function toggleMusic() {
             if (isPlaying) {
@@ -2901,30 +2926,17 @@
         });
 
         // ===================================================================
-        // NEW: Guestbook backed by real persistent storage.
-        // Uses window.storage (shared = true) so every visitor's message is
-        // saved to a real database and everyone who opens the page sees the
-        // same guestbook — not just messages from their own visit.
-        // All entries are combined into ONE key ("guestbook-entries") so we
-        // don't hammer the storage API with a separate call per message.
-        // If window.storage isn't available (e.g. the file is opened
-        // outside Claude, straight from disk or another host), it falls
-        // back automatically to session-only storage so the form still works.
+        // GUESTBOOK — Menggunakan localStorage agar data tersimpan PERMANEN
+        // di browser. Pesan akan tetap ada meskipun halaman di-refresh atau
+        // browser ditutup. Data bersifat lokal di browser yang sama.
         // ===================================================================
         const guestbookForm = document.getElementById('guestbookForm');
         const guestbookList = document.getElementById('guestbookList');
         const guestbookEmpty = document.getElementById('guestbookEmpty');
         const guestbookNote = document.getElementById('guestbookNote');
         const guestbookSubmitBtn = document.getElementById('guestbookSubmitBtn');
-        const GUESTBOOK_KEY = 'guestbook-entries';
-        const hasPersistentStorage = !!(window.storage && typeof window.storage.get === 'function');
+        const GUESTBOOK_KEY = 'guestbook-entries-kakvava';
         let guestbookEntriesCache = [];
-
-        if (guestbookNote) {
-            guestbookNote.textContent = hasPersistentStorage
-                ? 'Pesan tersimpan permanen dan bisa dilihat semua orang yang membuka halaman ini. 💾'
-                : 'Mode offline: penyimpanan permanen tidak tersedia di sini, pesan hanya tampil selama halaman ini terbuka.';
-        }
 
         function escapeHtml(str) {
             const div = document.createElement('div');
@@ -2947,21 +2959,17 @@
             });
         }
 
-        async function loadGuestbook() {
-            if (!hasPersistentStorage) return;
-            if (guestbookEmpty) guestbookEmpty.textContent = 'Memuat pesan...';
+        function loadGuestbook() {
             try {
-                const result = await window.storage.get(GUESTBOOK_KEY, true);
-                guestbookEntriesCache = result && result.value ? JSON.parse(result.value) : [];
+                const stored = localStorage.getItem(GUESTBOOK_KEY);
+                guestbookEntriesCache = stored ? JSON.parse(stored) : [];
             } catch (err) {
-                // key doesn't exist yet (no messages sent so far) — not a real error
                 guestbookEntriesCache = [];
             }
-            if (guestbookEmpty) guestbookEmpty.textContent = 'Belum ada pesan. Jadilah yang pertama! 💫';
             renderGuestbookList(guestbookEntriesCache);
         }
 
-        guestbookForm.addEventListener('submit', async function(e) {
+        guestbookForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const nameInput = document.getElementById('guestbookName');
             const messageInput = document.getElementById('guestbookMessage');
@@ -2977,24 +2985,19 @@
             }
 
             try {
-                if (hasPersistentStorage) {
-                    // Re-fetch right before writing to minimize (not fully
-                    // eliminate) the chance of clobbering another visitor's
-                    // message submitted at nearly the same moment.
-                    try {
-                        const latest = await window.storage.get(GUESTBOOK_KEY, true);
-                        guestbookEntriesCache = latest && latest.value ? JSON.parse(latest.value) : [];
-                    } catch (err) {
-                        guestbookEntriesCache = [];
-                    }
-                    guestbookEntriesCache.push(entry);
-                    await window.storage.set(GUESTBOOK_KEY, JSON.stringify(guestbookEntriesCache), true);
-                } else {
-                    guestbookEntriesCache.push(entry);
+                // Baca data terbaru dari localStorage
+                try {
+                    const stored = localStorage.getItem(GUESTBOOK_KEY);
+                    guestbookEntriesCache = stored ? JSON.parse(stored) : [];
+                } catch (err) {
+                    guestbookEntriesCache = [];
                 }
 
+                guestbookEntriesCache.push(entry);
+                localStorage.setItem(GUESTBOOK_KEY, JSON.stringify(guestbookEntriesCache));
+
                 renderGuestbookList(guestbookEntriesCache);
-                showToast('💌 Pesan terkirim, terima kasih!');
+                showToast('💌 Pesan terkirim dan tersimpan permanen!');
                 if (!prefersReducedMotion) createConfetti(isLowPower ? 6 : 14);
                 guestbookForm.reset();
             } catch (err) {

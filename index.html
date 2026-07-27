@@ -1442,8 +1442,503 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
+        /* ===================================================================
+           NEW: Wheel of wishes (Roda Doa & Harapan)
+        =================================================================== */
+        .page7 h1 { color: #fa709a; }
+        .page7 .recipient { color: #ffc371; }
+        .page8 h1 { color: #4facfe; }
+        .page8 .recipient { color: #43e97b; }
+
+        .wheel-wrap {
+            position: relative;
+            width: 270px;
+            height: 270px;
+            margin: 30px auto 20px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #667eea 0deg 45deg,
+                #764ba2 45deg 90deg,
+                #f093fb 90deg 135deg,
+                #f5576c 135deg 180deg,
+                #43e97b 180deg 225deg,
+                #4facfe 225deg 270deg,
+                #fee140 270deg 315deg,
+                #fa709a 315deg 360deg
+            );
+            border: 6px solid var(--card-bg);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35), inset 0 0 0 2px rgba(255,255,255,0.25);
+            transition: transform 4s cubic-bezier(0.12, 0.67, 0.1, 1);
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            z-index: 3;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+        }
+
+        .wheel-center-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            border: 4px solid var(--card-bg);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 0.85em;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 3;
+        }
+
+        .wheel-center-btn:hover { transform: translate(-50%, -50%) scale(1.08); }
+        .wheel-center-btn:active { transform: translate(-50%, -50%) scale(0.94); }
+        .wheel-center-btn:disabled { opacity: 0.75; cursor: default; }
+
+        .wheel-result {
+            max-width: 480px;
+            margin: 10px auto 0;
+            padding: 22px 28px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--card-bg), rgba(250, 112, 154, 0.1));
+            border-left: 4px solid #fa709a;
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 1.1em;
+            color: var(--text-body);
+            opacity: 0;
+            transform: translateY(14px) scale(0.96);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            min-height: 1.4em;
+        }
+
+        .wheel-result.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .wheel-hint {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===================================================================
+           NEW: Mini quiz (Mini Kuis Serunya Magang)
+        =================================================================== */
+        .quiz-box {
+            max-width: 520px;
+            margin: 20px auto 0;
+            text-align: left;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+
+        .quiz-progress-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.25);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .quiz-progress-dot.done { background: #43e97b; transform: scale(1.15); }
+        .quiz-progress-dot.current { background: #667eea; transform: scale(1.3); }
+
+        .quiz-question {
+            font-family: var(--font-display);
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--text-strong);
+            text-align: center;
+            margin-bottom: 22px;
+            min-height: 2.6em;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .quiz-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 16px;
+            border: 2px solid var(--divider);
+            background: var(--card-bg);
+            color: var(--text-body);
+            font-family: var(--font-body);
+            font-size: 1em;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .quiz-option-btn:hover:not(:disabled) {
+            border-color: #667eea;
+            transform: translateX(4px);
+            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.2);
+        }
+
+        .quiz-option-btn:disabled { cursor: default; }
+
+        .quiz-option-btn .quiz-option-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.15);
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        .quiz-option-btn.correct {
+            border-color: #43e97b;
+            background: rgba(67, 233, 123, 0.14);
+            animation: badgeBounce 0.6s ease;
+        }
+
+        .quiz-option-btn.correct .quiz-option-letter { background: #43e97b; color: #fff; }
+
+        .quiz-option-btn.wrong {
+            border-color: #f5576c;
+            background: rgba(245, 87, 108, 0.12);
+        }
+
+        .quiz-option-btn.wrong .quiz-option-letter { background: #f5576c; color: #fff; }
+
+        .quiz-result-panel {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: quizResultIn 0.6s ease forwards;
+        }
+
+        @keyframes quizResultIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-result-emoji {
+            font-size: 4em;
+            margin-bottom: 10px;
+            animation: bounceRotate 2s infinite;
+        }
+
+        .quiz-result-score {
+            font-family: var(--font-display);
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .quiz-result-text {
+            color: var(--text-body);
+            font-size: 1.05em;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        /* ===================================================================
+           NEW: Photobooth page — all rendering here happens on discrete
+           user actions (click/upload), never inside an animation loop,
+           so it stays cheap alongside the rest of the page's effects.
+        =================================================================== */
+        .page-photobooth h1 { color: #764ba2; }
+        .page-photobooth .recipient { color: #f5576c; }
+
+        .photobooth-stage {
+            max-width: 520px;
+            margin: 10px auto 0;
+        }
+
+        .photobooth-preview-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 22px;
+            overflow: hidden;
+            background: #16141f;
+            box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+            border: 3px solid var(--card-bg);
+        }
+
+        .photobooth-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            transform: scaleX(-1);
+        }
+
+        .photobooth-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.95em;
+        }
+
+        .photobooth-placeholder span { font-size: 2.6em; }
+
+        .photobooth-countdown {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 5em;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: scale(0.7);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .photobooth-countdown.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .photobooth-frame-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            box-sizing: border-box;
+        }
+
+        .photobooth-frame-overlay.active { opacity: 1; }
+
+        .photobooth-frame-overlay.frame-love {
+            border: 10px solid rgba(245, 87, 108, 0.85);
+        }
+        .photobooth-frame-overlay.frame-love::before,
+        .photobooth-frame-overlay.frame-love::after {
+            content: '💕';
+            position: absolute;
+            top: 6px;
+            font-size: 22px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        .photobooth-frame-overlay.frame-love::before { left: 10px; }
+        .photobooth-frame-overlay.frame-love::after { right: 10px; }
+
+        .photobooth-frame-overlay.frame-pastel {
+            border: 8px dashed rgba(255, 255, 255, 0.9);
+        }
+        .photobooth-frame-overlay.frame-pastel::before,
+        .photobooth-frame-overlay.frame-pastel::after {
+            content: '✨';
+            position: absolute;
+            font-size: 20px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        .photobooth-frame-overlay.frame-pastel::before { top: 8px; left: 10px; }
+        .photobooth-frame-overlay.frame-pastel::after { bottom: 8px; right: 10px; }
+
+        .photobooth-frame-overlay.frame-gold {
+            border: 8px solid #f5c451;
+        }
+        .photobooth-frame-overlay.frame-gold::before {
+            content: '🌟 Special Moment 🌟';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #f5c451;
+            background: rgba(0, 0, 0, 0.45);
+            padding: 3px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .photobooth-picker-label {
+            font-size: 0.8em;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .photobooth-filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 18px 0;
+        }
+
+        .photobooth-filter-chip {
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 2px solid var(--divider);
+            background: var(--card-bg);
+            color: var(--text-body);
+            font-family: var(--font-body);
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .photobooth-filter-chip:hover { border-color: #667eea; }
+
+        .photobooth-filter-chip.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .photobooth-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .photobooth-secondary-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 2px solid var(--divider);
+            background: transparent;
+            color: var(--text-body);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .photobooth-secondary-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .photobooth-upload-label { cursor: pointer; }
+
+        .photobooth-thumbs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .photobooth-thumb {
+            position: relative;
+            width: 68px;
+            height: 68px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--card-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.4s ease-out;
+        }
+
+        .photobooth-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photobooth-thumb-remove {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 13px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .photobooth-strip-wrap {
+            text-align: center;
+            margin-top: 26px;
+        }
+
+        .photobooth-strip-canvas {
+            max-width: 260px;
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .photobooth-strip-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .photobooth-note {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-top: 14px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .wheel-wrap { width: 220px; height: 220px; }
+            .wheel-center-btn { width: 62px; height: 62px; font-size: 0.78em; }
+            .quiz-question { font-size: 1.12em; }
+            .photobooth-preview-wrap { border-radius: 18px; }
+            .photobooth-strip-canvas { max-width: 200px; }
+
             .progress-nav {
                 right: 12px;
                 gap: 10px;
@@ -2186,6 +2681,9 @@
         <a class="progress-dot" href="#page3" data-label="Dedikasi"></a>
         <a class="progress-dot" href="#page4" data-label="Kenangan"></a>
         <a class="progress-dot" href="#page5" data-label="Perjalanan"></a>
+        <a class="progress-dot" href="#page7" data-label="Roda Doa"></a>
+        <a class="progress-dot" href="#page8" data-label="Kuis"></a>
+        <a class="progress-dot" href="#page-photobooth" data-label="Photobooth"></a>
         <a class="progress-dot" href="#page6" data-label="Hadiah"></a>
         <a class="progress-dot" href="#page-guestbook" data-label="Buku Tamu"></a>
     </nav>
@@ -2425,6 +2923,123 @@
                 <div class="hearts">💖 ✨ 🌟</div>
             </div>
             <div class="scroll-indicator">Hampir selesai...</div>
+        </div>
+
+        <!-- NEW: Page 7: Roda Doa & Harapan -->
+        <div class="page page7" id="page7">
+            <div class="aurora"><span></span><span></span><span></span></div>
+            <div class="card reveal-card">
+                <div class="icon icon-wave">🎡</div>
+                <h1>Roda Doa & Harapan</h1>
+                <div class="recipient">Putar untuk Kak Vava 🎈</div>
+                <div class="message">
+                    Yuk putar rodanya, biar semesta yang milih doa spesial buat Kak Vava hari ini! 🌟
+                </div>
+
+                <div class="wheel-wrap">
+                    <div class="wheel-pointer">🔻</div>
+                    <div class="wheel" id="wishWheel"></div>
+                    <button class="wheel-center-btn" id="wheelSpinBtn" onclick="spinWheel()">PUTAR!</button>
+                </div>
+                <div class="wheel-hint" id="wheelHint">Klik tombol di tengah roda yaa ✨</div>
+
+                <div class="wheel-result" id="wheelResult"></div>
+            </div>
+            <div class="scroll-indicator">Lanjut ke kuis seru...</div>
+        </div>
+
+        <!-- NEW: Page 8: Mini Kuis Serunya Magang -->
+        <div class="page page8" id="page8">
+            <div class="aurora"><span></span><span></span><span></span></div>
+            <div class="card reveal-card">
+                <div class="icon icon-wave">🧠</div>
+                <h1>Mini Kuis</h1>
+                <div class="recipient">Seberapa Seru Cerita Magang Kita?</div>
+                <div class="message">
+                    Coba jawab kuis kecil ini yuk, ada beberapa momen magang kita yang mungkin masih kamu ingat! 😄
+                </div>
+
+                <div class="quiz-box">
+                    <div class="quiz-progress" id="quizProgress"></div>
+                    <div id="quizQuestionArea">
+                        <div class="quiz-question" id="quizQuestionText"></div>
+                        <div class="quiz-options" id="quizOptionsArea"></div>
+                    </div>
+                    <div class="quiz-result-panel" id="quizResultPanel" style="display:none;">
+                        <div class="quiz-result-emoji" id="quizResultEmoji">🏆</div>
+                        <div class="quiz-result-score" id="quizResultScore"></div>
+                        <div class="quiz-result-text" id="quizResultText"></div>
+                        <button class="interactive-btn" onclick="restartQuiz()">🔄 Main Lagi</button>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator">Terakhir, ada hadiah kecil...</div>
+        </div>
+
+        <!-- NEW: Page Photobooth -->
+        <div class="page page-photobooth" id="page-photobooth">
+            <div class="aurora"><span></span><span></span><span></span></div>
+            <div class="card reveal-card">
+                <div class="icon icon-wave">📸</div>
+                <h1>Photobooth Kenangan</h1>
+                <div class="recipient">Foto Bareng (Virtual) Yuk, Kak!</div>
+                <div class="message">
+                    Nyalain kamera, pilih filter & bingkai favorit, terus ambil sampai 4 pose buat jadi photostrip kenangan lucu-lucuan! Tiap foto langsung otomatis kesimpen ke device kamu 📥
+                </div>
+
+                <div class="photobooth-stage">
+                    <div class="photobooth-preview-wrap">
+                        <video id="photoboothVideo" class="photobooth-video" autoplay playsinline muted></video>
+                        <div class="photobooth-placeholder" id="photoboothPlaceholder">
+                            <span>📷</span>
+                            <p>Kamera belum aktif</p>
+                        </div>
+                        <div class="photobooth-frame-overlay" id="photoboothFrameOverlay"></div>
+                        <div class="photobooth-countdown" id="photoboothCountdown"></div>
+                    </div>
+
+                    <div class="photobooth-picker-label">🎨 Pilih Filter</div>
+                    <div class="photobooth-filters" id="photoboothFilters">
+                        <button type="button" class="photobooth-filter-chip active" data-filter="none">Normal</button>
+                        <button type="button" class="photobooth-filter-chip" data-filter="grayscale(1)">B &amp; W</button>
+                        <button type="button" class="photobooth-filter-chip" data-filter="sepia(0.6) contrast(1.1)">Vintage</button>
+                        <button type="button" class="photobooth-filter-chip" data-filter="saturate(1.8) contrast(1.05)">Vivid</button>
+                        <button type="button" class="photobooth-filter-chip" data-filter="brightness(1.12) blur(0.4px)">Soft</button>
+                    </div>
+
+                    <div class="photobooth-picker-label">🖼️ Pilih Bingkai</div>
+                    <div class="photobooth-filters" id="photoboothFrames">
+                        <button type="button" class="photobooth-filter-chip active" data-frame="none">🚫 Tanpa Bingkai</button>
+                        <button type="button" class="photobooth-filter-chip" data-frame="love">💕 Love</button>
+                        <button type="button" class="photobooth-filter-chip" data-frame="pastel">✨ Pastel</button>
+                        <button type="button" class="photobooth-filter-chip" data-frame="gold">🌟 Gold</button>
+                    </div>
+
+                    <div class="photobooth-controls">
+                        <button class="interactive-btn" id="photoboothStartBtn" onclick="startPhotobooth()">🎥 Buka Kamera</button>
+                        <button class="interactive-btn" id="photoboothCaptureBtn" onclick="capturePhotoboothShot()" style="display:none;">📸 Ambil Foto (<span id="photoboothShotCount">0</span>/4)</button>
+                        <button class="photobooth-secondary-btn" id="photoboothStopBtn" onclick="stopPhotobooth()" style="display:none;">Tutup Kamera</button>
+                        <label class="photobooth-secondary-btn photobooth-upload-label">
+                            📁 Upload Foto
+                            <input type="file" accept="image/*" id="photoboothUploadInput" hidden>
+                        </label>
+                        <button class="photobooth-secondary-btn" id="photoboothBuildBtn" style="display:none;" onclick="buildPhotoboothStrip()">🎬 Buat Photostrip</button>
+                    </div>
+
+                    <div class="photobooth-thumbs" id="photoboothThumbs"></div>
+
+                    <div class="photobooth-strip-wrap" id="photoboothStripWrap" style="display:none;">
+                        <canvas id="photoboothStripCanvas" class="photobooth-strip-canvas"></canvas>
+                        <div class="photobooth-strip-actions">
+                            <button class="interactive-btn" onclick="downloadPhotoboothStrip()">⬇️ Simpan Photostrip</button>
+                            <button class="photobooth-secondary-btn" onclick="resetPhotobooth()">🔄 Ulangi</button>
+                        </div>
+                    </div>
+
+                    <div class="photobooth-note">📷 Foto diproses langsung di browser kamu, gak diupload ke mana-mana. Tiap foto otomatis kesave ke device begitu selesai di-shoot, dan kamera otomatis dimatikan setelah selesai supaya halaman tetap ringan.</div>
+                </div>
+            </div>
+            <div class="scroll-indicator">Terakhir, ada hadiah kecil...</div>
         </div>
 
         <!-- Page 6: Gift & Closing -->
@@ -2922,6 +3537,570 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeLightbox();
         });
+
+        // ===================================================================
+        // NEW: Roda Doa & Harapan — a lightweight "wheel of fortune". The
+        // wheel is divided into 8 equal visual segments; spinning always
+        // rotates forward (never snaps back) and lands the pointer inside
+        // a randomly chosen segment, then reveals the matching wish.
+        // ===================================================================
+        const wishes = [
+            'Semoga rejekimu lancar dan berkah selalu 🌿',
+            'Semoga karirmu makin gemilang dan bersinar ✨',
+            'Semoga kesehatanmu selalu terjaga, kak 💪',
+            'Semoga semua mimpi besarmu terwujud 🌈',
+            'Semoga selalu dikelilingi orang-orang baik 🤍',
+            'Semoga hatimu selalu tenang dan bahagia 😊',
+            'Semoga setiap ikhtiarmu dimudahkan Allah 🤲',
+            'Semoga makin banyak yang sayang & bangga sama kamu 💖'
+        ];
+        const wishWheel = document.getElementById('wishWheel');
+        const wheelSpinBtn = document.getElementById('wheelSpinBtn');
+        const wheelResult = document.getElementById('wheelResult');
+        const wheelHint = document.getElementById('wheelHint');
+        let wheelRotationAccum = 0;
+        let wheelSpinning = false;
+
+        function spinWheel() {
+            if (wheelSpinning || !wishWheel) return;
+            wheelSpinning = true;
+            wheelSpinBtn.disabled = true;
+            wheelResult.classList.remove('visible');
+            wheelHint.textContent = 'Rodanya lagi muter, ditunggu yaa...';
+
+            const segmentCount = wishes.length;
+            const segmentAngle = 360 / segmentCount;
+            const chosenIndex = Math.floor(Math.random() * segmentCount);
+            // Keep the stop point comfortably inside the segment, not on the edge
+            const innerOffset = segmentAngle * 0.2 + Math.random() * (segmentAngle * 0.6);
+            const extraFullSpins = 360 * (5 + Math.floor(Math.random() * 2));
+            const targetWithinCircle = 360 - (chosenIndex * segmentAngle + innerOffset);
+
+            wheelRotationAccum += extraFullSpins + ((targetWithinCircle - (wheelRotationAccum % 360)) + 360) % 360;
+            wishWheel.style.transform = `rotate(${wheelRotationAccum}deg)`;
+
+            setTimeout(() => {
+                wheelSpinning = false;
+                wheelSpinBtn.disabled = false;
+                wheelHint.textContent = 'Putar lagi kalau mau doa yang lain 🌟';
+                wheelResult.textContent = '"' + wishes[chosenIndex] + '"';
+                wheelResult.classList.add('visible');
+                showToast('🎡 Doa spesial buat Kak Vava!');
+                if (!prefersReducedMotion) createConfetti(isLowPower ? 16 : 32);
+            }, 4100);
+        }
+
+        // ===================================================================
+        // NEW: Mini Kuis Serunya Magang — a short multiple-choice quiz with
+        // instant right/wrong feedback, auto-advance, and a fun result
+        // screen scaled to the score.
+        // ===================================================================
+        const quizQuestions = [
+            {
+                q: 'Di project apa kita kerja bareng selama magang?',
+                options: ['International Youth Goals (IYG)', 'UNICEF Indonesia', 'Kemendikbud', 'Freelance mandiri'],
+                correct: 0
+            },
+            {
+                q: "Siapa yang bareng Kak Vava membimbing di hari pertama?",
+                options: ['Kak Budi', 'Kak Ghazy', 'Kak Sari', 'Kak Rian'],
+                correct: 1
+            },
+            {
+                q: 'Di halaman ini, Kak Vava berulang tahun yang ke berapa?',
+                options: ['20 tahun', '21 tahun', '22 tahun', '23 tahun'],
+                correct: 1
+            },
+            {
+                q: 'Badge apa yang paling cocok buat Kak Vava menurut halaman ini?',
+                options: ['Paling Jarang Online', 'Paling Pendiam', 'Mentor Terbaik', 'Paling Galak'],
+                correct: 2
+            }
+        ];
+
+        const quizProgress = document.getElementById('quizProgress');
+        const quizQuestionArea = document.getElementById('quizQuestionArea');
+        const quizQuestionText = document.getElementById('quizQuestionText');
+        const quizOptionsArea = document.getElementById('quizOptionsArea');
+        const quizResultPanel = document.getElementById('quizResultPanel');
+        const quizResultEmoji = document.getElementById('quizResultEmoji');
+        const quizResultScore = document.getElementById('quizResultScore');
+        const quizResultText = document.getElementById('quizResultText');
+
+        let quizIndex = 0;
+        let quizScore = 0;
+        let quizLocked = false;
+        const optionLetters = ['A', 'B', 'C', 'D'];
+
+        function renderQuizProgress() {
+            if (!quizProgress) return;
+            quizProgress.innerHTML = '';
+            quizQuestions.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'quiz-progress-dot' + (i < quizIndex ? ' done' : (i === quizIndex ? ' current' : ''));
+                quizProgress.appendChild(dot);
+            });
+        }
+
+        function renderQuizQuestion() {
+            quizLocked = false;
+            renderQuizProgress();
+            const current = quizQuestions[quizIndex];
+            quizQuestionText.textContent = current.q;
+            quizOptionsArea.innerHTML = '';
+
+            current.options.forEach((optionText, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option-btn';
+                btn.innerHTML = '<span class="quiz-option-letter">' + optionLetters[i] + '</span><span>' + escapeHtml(optionText) + '</span>';
+                btn.addEventListener('click', () => selectQuizAnswer(i, btn));
+                quizOptionsArea.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(selectedIndex, btnEl) {
+            if (quizLocked) return;
+            quizLocked = true;
+            const current = quizQuestions[quizIndex];
+            const allBtns = quizOptionsArea.querySelectorAll('.quiz-option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedIndex === current.correct) {
+                quizScore++;
+                btnEl.classList.add('correct');
+                showToast('✅ Yeay, benar!');
+                if (!prefersReducedMotion) createConfetti(isLowPower ? 8 : 16);
+            } else {
+                btnEl.classList.add('wrong');
+                allBtns[current.correct].classList.add('correct');
+                showToast('💡 Belum tepat, jawaban benarnya sudah ditandai yaa');
+            }
+
+            setTimeout(() => {
+                quizIndex++;
+                if (quizIndex < quizQuestions.length) {
+                    renderQuizQuestion();
+                } else {
+                    showQuizResult();
+                }
+            }, 1300);
+        }
+
+        function showQuizResult() {
+            renderQuizProgress();
+            quizQuestionArea.style.display = 'none';
+            quizResultPanel.style.display = 'block';
+
+            const total = quizQuestions.length;
+            quizResultScore.textContent = quizScore + ' / ' + total + ' Benar';
+
+            let emoji = '🌱';
+            let text = 'Yah gapapa, yang penting kenangannya tetap manis kok! 💫';
+            if (quizScore === total) {
+                emoji = '🏆';
+                text = 'Perfect score! Ternyata kamu inget banget momen-momen magang kita huhu 🥹💖';
+                if (!prefersReducedMotion) createConfetti(isLowPower ? 30 : 60);
+            } else if (quizScore >= total / 2) {
+                emoji = '🌟';
+                text = 'Not bad! Banyak momen serunya yang masih nempel di ingatan 😊';
+            }
+            quizResultEmoji.textContent = emoji;
+            quizResultText.textContent = text;
+        }
+
+        function restartQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            quizResultPanel.style.display = 'none';
+            quizQuestionArea.style.display = 'block';
+            renderQuizQuestion();
+        }
+
+        if (quizQuestionArea) renderQuizQuestion();
+
+        // ===================================================================
+        // NEW: Photobooth — webcam preview + up-to-4-shot photostrip.
+        // PERFORMANCE NOTES (kept deliberately lag-free):
+        // - The camera is never started automatically; it only turns on
+        //   when the user clicks "Buka Kamera", and only a modest 640x480
+        //   stream is requested.
+        // - CSS `filter` on the live <video> is GPU-accelerated and costs
+        //   nothing extra per frame (it's not a JS pixel loop).
+        // - Capturing a shot touches the canvas exactly once (on click),
+        //   never inside requestAnimationFrame/setInterval.
+        // - The stream's tracks are stopped (camera released) as soon as
+        //   the strip is built, and automatically when this page scrolls
+        //   out of view, so it never keeps running in the background.
+        // ===================================================================
+        const photoboothVideo = document.getElementById('photoboothVideo');
+        const photoboothPlaceholder = document.getElementById('photoboothPlaceholder');
+        const photoboothCountdown = document.getElementById('photoboothCountdown');
+        const photoboothStartBtn = document.getElementById('photoboothStartBtn');
+        const photoboothCaptureBtn = document.getElementById('photoboothCaptureBtn');
+        const photoboothStopBtn = document.getElementById('photoboothStopBtn');
+        const photoboothShotCount = document.getElementById('photoboothShotCount');
+        const photoboothThumbs = document.getElementById('photoboothThumbs');
+        const photoboothBuildBtn = document.getElementById('photoboothBuildBtn');
+        const photoboothStripWrap = document.getElementById('photoboothStripWrap');
+        const photoboothUploadInput = document.getElementById('photoboothUploadInput');
+        const photoboothFrameOverlay = document.getElementById('photoboothFrameOverlay');
+        const PHOTOBOOTH_MAX_SHOTS = 4;
+
+        let photoboothStream = null;
+        let photoboothFilter = 'none';
+        let photoboothFrame = 'none';
+        let photoboothCapturing = false;
+        let photoboothShots = [];
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            if (photoboothStartBtn) {
+                photoboothStartBtn.disabled = true;
+                photoboothStartBtn.textContent = '🚫 Kamera tidak didukung di sini';
+            }
+        }
+
+        document.querySelectorAll('.photobooth-filter-chip[data-filter]').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.photobooth-filter-chip[data-filter]').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                photoboothFilter = this.dataset.filter;
+                if (photoboothVideo) {
+                    photoboothVideo.style.filter = photoboothFilter === 'none' ? 'none' : photoboothFilter;
+                }
+            });
+        });
+
+        // Frame picker — updates the live CSS overlay (just a visual guide)
+        // and the value baked into the actual captured photo via canvas.
+        document.querySelectorAll('.photobooth-filter-chip[data-frame]').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.photobooth-filter-chip[data-frame]').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                photoboothFrame = this.dataset.frame;
+                if (photoboothFrameOverlay) {
+                    photoboothFrameOverlay.className = 'photobooth-frame-overlay';
+                    if (photoboothFrame !== 'none') {
+                        photoboothFrameOverlay.classList.add('active', 'frame-' + photoboothFrame);
+                    }
+                }
+            });
+        });
+
+        // Draws the chosen frame decoration directly onto a capture canvas
+        // (runs once per photo, not per animation frame — cheap).
+        function drawPhotoboothFrame(ctx, w, h, style) {
+            if (style === 'none') return;
+            ctx.save();
+            ctx.filter = 'none';
+            ctx.textBaseline = 'alphabetic';
+
+            if (style === 'love') {
+                const barH = h * 0.14;
+                ctx.fillStyle = 'rgba(255,255,255,0.92)';
+                ctx.fillRect(0, h - barH, w, barH);
+                ctx.fillStyle = '#f5576c';
+                ctx.textAlign = 'center';
+                ctx.font = '600 ' + Math.round(h * 0.045) + "px 'DM Sans', sans-serif";
+                ctx.fillText('Kenangan Spesial 💖', w / 2, h - barH / 2 + h * 0.015);
+                ctx.lineWidth = w * 0.02;
+                ctx.strokeStyle = '#f5576c';
+                ctx.strokeRect(ctx.lineWidth / 2, ctx.lineWidth / 2, w - ctx.lineWidth, h - ctx.lineWidth);
+                ctx.font = Math.round(h * 0.09) + 'px serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('💕', w * 0.02, h * 0.11);
+                ctx.textAlign = 'right';
+                ctx.fillText('💕', w * 0.98, h * 0.11);
+            } else if (style === 'pastel') {
+                ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+                ctx.lineWidth = w * 0.018;
+                ctx.setLineDash([w * 0.02, w * 0.014]);
+                ctx.strokeRect(ctx.lineWidth, ctx.lineWidth, w - ctx.lineWidth * 2, h - ctx.lineWidth * 2);
+                ctx.setLineDash([]);
+                ctx.font = Math.round(h * 0.08) + 'px serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('✨', w * 0.03, h * 0.11);
+                ctx.textAlign = 'right';
+                ctx.fillText('✨', w * 0.97, h * 0.95);
+                const badgeW = w * 0.46, badgeH = h * 0.09;
+                ctx.fillStyle = 'rgba(0,0,0,0.45)';
+                ctx.fillRect(w * 0.03, h * 0.03, badgeW, badgeH);
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'left';
+                ctx.font = '600 ' + Math.round(h * 0.04) + "px 'DM Sans', sans-serif";
+                ctx.fillText('✨ Kenangan Spesial', w * 0.05, h * 0.03 + badgeH * 0.65);
+            } else if (style === 'gold') {
+                ctx.strokeStyle = '#f5c451';
+                ctx.lineWidth = w * 0.02;
+                ctx.strokeRect(ctx.lineWidth / 2, ctx.lineWidth / 2, w - ctx.lineWidth, h - ctx.lineWidth);
+                const barH = h * 0.1;
+                ctx.fillStyle = 'rgba(0,0,0,0.45)';
+                ctx.fillRect(0, h - barH, w, barH);
+                ctx.fillStyle = '#f5c451';
+                ctx.textAlign = 'center';
+                ctx.font = '600 ' + Math.round(h * 0.04) + "px 'DM Sans', sans-serif";
+                ctx.fillText('🌟 Special Moment 🌟', w / 2, h - barH / 2 + h * 0.013);
+            }
+            ctx.restore();
+        }
+
+        // Triggers an immediate download of a single photo to the visitor's
+        // device — a plain <a download> click, no extra network round-trip.
+        function downloadPhotoboothPhoto(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function startPhotobooth() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast('⚠️ Kamera tidak tersedia di sini, coba upload foto yaa');
+                return;
+            }
+            if (photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS) {
+                showToast('Sudah 4 foto nih, ulangi dulu buat foto baru');
+                return;
+            }
+            try {
+                photoboothStream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+                    audio: false
+                });
+                photoboothVideo.srcObject = photoboothStream;
+                photoboothVideo.style.filter = photoboothFilter === 'none' ? 'none' : photoboothFilter;
+                photoboothVideo.style.display = 'block';
+                photoboothPlaceholder.style.display = 'none';
+                photoboothStartBtn.style.display = 'none';
+                photoboothCaptureBtn.style.display = 'inline-flex';
+                photoboothStopBtn.style.display = 'inline-flex';
+            } catch (err) {
+                showToast('⚠️ Gak bisa akses kamera, coba upload foto aja yaa');
+            }
+        }
+
+        function stopPhotobooth() {
+            if (photoboothStream) {
+                photoboothStream.getTracks().forEach(track => track.stop());
+                photoboothStream = null;
+            }
+            if (photoboothVideo) {
+                photoboothVideo.style.display = 'none';
+                photoboothVideo.srcObject = null;
+            }
+            if (photoboothPlaceholder) photoboothPlaceholder.style.display = 'flex';
+            if (photoboothStartBtn) photoboothStartBtn.style.display = 'inline-flex';
+            if (photoboothCaptureBtn) photoboothCaptureBtn.style.display = 'none';
+            if (photoboothStopBtn) photoboothStopBtn.style.display = 'none';
+        }
+
+        function captureFrameToDataURL() {
+            const w = photoboothVideo.videoWidth || 640;
+            const h = photoboothVideo.videoHeight || 480;
+            const off = document.createElement('canvas');
+            off.width = w;
+            off.height = h;
+            const ctx = off.getContext('2d');
+            ctx.filter = photoboothFilter === 'none' ? 'none' : photoboothFilter;
+            ctx.translate(w, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(photoboothVideo, 0, 0, w, h);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            drawPhotoboothFrame(ctx, w, h, photoboothFrame);
+            return off.toDataURL('image/jpeg', 0.9);
+        }
+
+        function capturePhotoboothShot() {
+            if (!photoboothStream || photoboothCapturing) return;
+            if (photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS) {
+                showToast('Sudah 4 foto, langsung buat photostrip yuk!');
+                return;
+            }
+            photoboothCapturing = true;
+            photoboothCaptureBtn.disabled = true;
+            let count = 3;
+            photoboothCountdown.textContent = count;
+            photoboothCountdown.classList.add('visible');
+
+            const tick = function() {
+                count--;
+                if (count > 0) {
+                    photoboothCountdown.textContent = count;
+                    setTimeout(tick, 650);
+                } else {
+                    photoboothCountdown.textContent = '📸';
+                    setTimeout(function() {
+                        const dataUrl = captureFrameToDataURL();
+                        addPhotoboothShot(dataUrl);
+                        photoboothCountdown.classList.remove('visible');
+                        photoboothCapturing = false;
+                        photoboothCaptureBtn.disabled = photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS;
+                        if (!prefersReducedMotion) createConfetti(isLowPower ? 6 : 12);
+                    }, 320);
+                }
+            };
+            setTimeout(tick, 650);
+        }
+
+        function addUploadedPhoto(file) {
+            if (photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS) {
+                showToast('Sudah 4 foto, hapus salah satu dulu atau ulangi');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const targetW = 640, targetH = 480;
+                    const off = document.createElement('canvas');
+                    off.width = targetW;
+                    off.height = targetH;
+                    const ctx = off.getContext('2d');
+                    ctx.filter = photoboothFilter === 'none' ? 'none' : photoboothFilter;
+                    const scale = Math.max(targetW / img.width, targetH / img.height);
+                    const sw = targetW / scale, sh = targetH / scale;
+                    const sx = (img.width - sw) / 2, sy = (img.height - sh) / 2;
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+                    drawPhotoboothFrame(ctx, targetW, targetH, photoboothFrame);
+                    addPhotoboothShot(off.toDataURL('image/jpeg', 0.9));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (photoboothUploadInput) {
+            photoboothUploadInput.addEventListener('change', function(e) {
+                const file = e.target.files && e.target.files[0];
+                if (file) addUploadedPhoto(file);
+                e.target.value = '';
+            });
+        }
+
+        function addPhotoboothShot(dataUrl) {
+            photoboothShots.push(dataUrl);
+            const shotNumber = photoboothShots.length;
+            photoboothShotCount.textContent = shotNumber;
+            renderPhotoboothThumbs();
+
+            // Save this shot to the visitor's device right away.
+            const filename = 'photobooth-kakvava-' + shotNumber + '-' + Date.now() + '.jpg';
+            downloadPhotoboothPhoto(dataUrl, filename);
+            showToast('💾 Foto ' + shotNumber + ' otomatis tersimpan ke device kamu!');
+
+            if (photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS) {
+                buildPhotoboothStrip();
+            }
+        }
+
+        function renderPhotoboothThumbs() {
+            photoboothThumbs.innerHTML = '';
+            photoboothShots.forEach(function(src, i) {
+                const item = document.createElement('div');
+                item.className = 'photobooth-thumb';
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = 'Foto ' + (i + 1);
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'photobooth-thumb-remove';
+                removeBtn.title = 'Hapus';
+                removeBtn.textContent = '×';
+                removeBtn.addEventListener('click', function() { removePhotoboothShot(i); });
+                item.appendChild(img);
+                item.appendChild(removeBtn);
+                photoboothThumbs.appendChild(item);
+            });
+            photoboothShotCount.textContent = photoboothShots.length;
+            photoboothBuildBtn.style.display = photoboothShots.length ? 'inline-flex' : 'none';
+            if (photoboothCaptureBtn) {
+                photoboothCaptureBtn.disabled = photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS;
+            }
+        }
+
+        function removePhotoboothShot(index) {
+            photoboothShots.splice(index, 1);
+            renderPhotoboothThumbs();
+            photoboothStripWrap.style.display = 'none';
+        }
+
+        function buildPhotoboothStrip() {
+            if (!photoboothShots.length) {
+                showToast('Ambil atau upload foto dulu yaa');
+                return;
+            }
+            stopPhotobooth();
+
+            const stripCanvas = document.getElementById('photoboothStripCanvas');
+            const padding = 20, gap = 14, shotW = 480, shotH = 360, footerH = 84;
+            stripCanvas.width = shotW + padding * 2;
+            stripCanvas.height = padding * 2 + photoboothShots.length * shotH + (photoboothShots.length - 1) * gap + footerH;
+            const ctx = stripCanvas.getContext('2d');
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, stripCanvas.height);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, stripCanvas.width, stripCanvas.height);
+
+            let loaded = 0;
+            photoboothShots.forEach(function(src, i) {
+                const img = new Image();
+                img.onload = function() {
+                    const y = padding + i * (shotH + gap);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(padding - 6, y - 6, shotW + 12, shotH + 12);
+                    ctx.drawImage(img, padding, y, shotW, shotH);
+                    loaded++;
+                    if (loaded === photoboothShots.length) drawPhotoboothStripFooter(ctx, stripCanvas);
+                };
+                img.src = src;
+            });
+        }
+
+        function drawPhotoboothStripFooter(ctx, stripCanvas) {
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.font = "600 22px 'DM Sans', sans-serif";
+            ctx.fillText('📸 Photobooth Kenangan', stripCanvas.width / 2, stripCanvas.height - 44);
+            ctx.font = "400 15px 'DM Sans', sans-serif";
+            ctx.fillText('Photobooth Spesial 💖', stripCanvas.width / 2, stripCanvas.height - 18);
+            photoboothStripWrap.style.display = 'block';
+            showToast('🎬 Photostrip siap! Yuk disimpan');
+            if (!prefersReducedMotion) createConfetti(isLowPower ? 16 : 32);
+        }
+
+        function downloadPhotoboothStrip() {
+            const stripCanvas = document.getElementById('photoboothStripCanvas');
+            const link = document.createElement('a');
+            link.download = 'photobooth-kak-vava.png';
+            link.href = stripCanvas.toDataURL('image/png');
+            link.click();
+            showToast('⬇️ Photostrip berhasil disimpan!');
+        }
+
+        function resetPhotobooth() {
+            stopPhotobooth();
+            photoboothShots = [];
+            renderPhotoboothThumbs();
+            photoboothStripWrap.style.display = 'none';
+        }
+
+        // Release the camera automatically once this section is scrolled
+        // out of view, so it never keeps decoding video in the background.
+        const photoboothPage = document.getElementById('page-photobooth');
+        if (photoboothPage) {
+            const photoboothVisObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (!entry.isIntersecting && photoboothStream) {
+                        stopPhotobooth();
+                        showToast('📷 Kamera dimatikan otomatis biar halaman tetap ringan');
+                    }
+                });
+            }, { threshold: 0 });
+            photoboothVisObserver.observe(photoboothPage);
+        }
 
         // ===================================================================
         // GUESTBOOK — Menggunakan localStorage agar data tersimpan PERMANEN

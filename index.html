@@ -3045,7 +3045,7 @@
                     Dengan penuh rasa hormat, terima kasih, dan doa terbaik<br>
                     🙏💖
                     <br><br>
-                    <strong>~ Muhammad Fawwaz Rayyan K ~</strong>
+                    <strong>~ Muhammad Fawwaz Rayyan Khalish ~</strong>
                 </div>
 
                 <button class="interactive-btn" id="https://auliaevawanilarissa.netlify.app/" type="button" onclick="sharePage()">🔗 Bagikan Halaman Ini</button>
@@ -3811,15 +3811,50 @@
             ctx.restore();
         }
 
-        // Triggers an immediate download of a single photo to the visitor's
-        // device — a plain <a download> click, no extra network round-trip.
-        function downloadPhotoboothPhoto(dataUrl, filename) {
+        // Detects iOS (including iPadOS, which reports as "MacIntel" but has touch support).
+        // iOS Safari historically ignores/blocks the <a download> attribute for data: URLs,
+        // so a plain anchor click there just opens the image instead of saving it.
+        function isIOSDevice() {
+            return /iP(hone|od|ad)/.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+
+        // Universal "save this image" helper — works on laptop/desktop browsers,
+        // Android, AND iOS.
+        // - Desktop / Android: uses the classic <a download> click, which saves
+        //   straight to the Downloads folder.
+        // - iOS Safari/Chrome: <a download> is unreliable there, so instead we hand
+        //   the image to the native Share Sheet (navigator.share with a File), which
+        //   has a built-in "Save Image" option that saves straight to Photos.
+        async function saveImageDataUrl(dataUrl, filename) {
+            if (isIOSDevice() && navigator.canShare) {
+                try {
+                    const res = await fetch(dataUrl);
+                    const blob = await res.blob();
+                    const file = new File([blob], filename, { type: blob.type || 'image/png' });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file] });
+                        showToast('📤 Pilih "Save Image" di menu share untuk simpan ke galeri');
+                        return true;
+                    }
+                } catch (err) {
+                    // User cancelled the share sheet, or sharing isn't allowed here —
+                    // fall through to the classic download so they still get the image.
+                }
+            }
             const link = document.createElement('a');
             link.download = filename;
             link.href = dataUrl;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            return false;
+        }
+
+        // Triggers an immediate download of a single photo to the visitor's
+        // device — works across desktop, Android, and iOS (see saveImageDataUrl above).
+        async function downloadPhotoboothPhoto(dataUrl, filename) {
+            await saveImageDataUrl(dataUrl, filename);
         }
 
         async function startPhotobooth() {
@@ -3952,10 +3987,19 @@
             photoboothShotCount.textContent = shotNumber;
             renderPhotoboothThumbs();
 
-            // Save this shot to the visitor's device right away.
-            const filename = 'photobooth-kakvava-' + shotNumber + '-' + Date.now() + '.jpg';
-            downloadPhotoboothPhoto(dataUrl, filename);
-            showToast('💾 Foto ' + shotNumber + ' otomatis tersimpan ke device kamu!');
+            if (isIOSDevice()) {
+                // iOS: the Share Sheet only opens from a direct tap, so auto-firing it
+                // for every single shot here (no tap involved) would either be blocked
+                // or spam 4 share dialogs in a row. Instead, the thumbnail <img> above
+                // can already be saved natively via long-press → "Save to Photos", and
+                // all 4 shots can be saved together once "Simpan Photostrip" is tapped.
+                showToast('📸 Foto ' + shotNumber + ' siap! Tekan & tahan gambarnya buat simpan ke galeri');
+            } else {
+                // Desktop / Android: save this shot straight to the device right away.
+                const filename = 'photobooth-kakvava-' + shotNumber + '-' + Date.now() + '.jpg';
+                downloadPhotoboothPhoto(dataUrl, filename);
+                showToast('💾 Foto ' + shotNumber + ' otomatis tersimpan ke device kamu!');
+            }
 
             if (photoboothShots.length >= PHOTOBOOTH_MAX_SHOTS) {
                 buildPhotoboothStrip();
@@ -4039,13 +4083,10 @@
             if (!prefersReducedMotion) createConfetti(isLowPower ? 16 : 32);
         }
 
-        function downloadPhotoboothStrip() {
+        async function downloadPhotoboothStrip() {
             const stripCanvas = document.getElementById('photoboothStripCanvas');
-            const link = document.createElement('a');
-            link.download = 'photobooth-kak-vava.png';
-            link.href = stripCanvas.toDataURL('image/png');
-            link.click();
-            showToast('⬇️ Photostrip berhasil disimpan!');
+            const savedViaShare = await saveImageDataUrl(stripCanvas.toDataURL('image/png'), 'photobooth-kak-vava.png');
+            if (!savedViaShare) showToast('⬇️ Photostrip berhasil disimpan!');
         }
 
         function resetPhotobooth() {

@@ -203,6 +203,18 @@
             display: block;
         }
 
+        /* Invisible 44x44 hit area centered on the dot so it's easy to tap
+           on touchscreens, without changing how big the dot looks. */
+        .progress-dot::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 22px;
+            height: 22px;
+            transform: translate(-50%, -50%);
+        }
+
         .progress-dot::after {
             content: attr(data-label);
             position: absolute;
@@ -303,7 +315,7 @@
 
         .welcome-text {
             font-family: var(--font-display);
-            font-size: 3.5em;
+            font-size: clamp(1.9rem, 1.1rem + 5.5vw, 3.5rem);
             font-weight: 700;
             margin-top: 36px;
             animation: slideUpBounce 1.2s ease-out 0.5s both;
@@ -515,7 +527,7 @@
 
         h1 {
             font-family: var(--font-display);
-            font-size: 2.8em;
+            font-size: clamp(1.7rem, 1.35rem + 2.2vw, 2.8rem);
             margin-bottom: 20px;
             font-weight: 700;
             animation: slideInLeft 0.8s ease-out;
@@ -555,7 +567,7 @@
 
         .recipient {
             font-family: var(--font-display);
-            font-size: 1.9em;
+            font-size: clamp(1.15rem, 0.95rem + 1vw, 1.9rem);
             margin-bottom: 30px;
             font-weight: 600;
             font-style: italic;
@@ -582,8 +594,8 @@
 
         .message {
             color: var(--text-body);
-            font-size: 1.15em;
-            line-height: 1.95;
+            font-size: clamp(1rem, 0.94rem + 0.35vw, 1.15rem);
+            line-height: 1.8;
             margin-bottom: 30px;
             animation: fadeInUp 1s ease-out;
         }
@@ -605,7 +617,7 @@
         }
 
         .icon {
-            font-size: 90px;
+            font-size: clamp(56px, 40px + 10vw, 90px);
             margin-bottom: 20px;
             animation: bounceRotate 2s infinite;
         }
@@ -1222,7 +1234,7 @@
 
         .birthday-number {
             font-family: var(--font-display);
-            font-size: 7em;
+            font-size: clamp(4.6rem, 3.75rem + 5.1vw, 7rem);
             font-weight: 800;
             line-height: 1;
             background: linear-gradient(180deg, #ffc371 0%, #ff6b9d 50%, #c850c0 100%);
@@ -1245,7 +1257,7 @@
         }
 
         .birthday-cake {
-            font-size: 5em;
+            font-size: clamp(2.9rem, 2.28rem + 4.26vw, 5rem);
             animation: cakeBounce 2s ease-in-out infinite;
             display: inline-block;
             margin-bottom: 10px;
@@ -1948,11 +1960,15 @@
                 display: none;
             }
 
+            .progress-dot::before {
+                width: 20px;
+                height: 20px;
+            }
+
             .welcome-sub {
                 font-size: 0.85em;
             }
             .welcome-text {
-                font-size: 2em;
                 margin-top: 20px;
             }
             
@@ -1977,12 +1993,10 @@
             }
             
             h1 {
-                font-size: 1.8em;
                 margin-bottom: 15px;
             }
             
             .recipient {
-                font-size: 1.3em;
                 margin-bottom: 20px;
             }
             
@@ -1993,13 +2007,11 @@
             }
 
             .message {
-                font-size: 1em;
-                line-height: 1.7;
+                line-height: 1.75;
                 margin-bottom: 20px;
             }
 
             .icon {
-                font-size: 60px;
                 margin-bottom: 15px;
             }
 
@@ -2055,14 +2067,6 @@
                 padding: 40px 15px;
             }
 
-            .birthday-number {
-                font-size: 5em;
-            }
-
-            .birthday-cake {
-                font-size: 3.5em;
-            }
-
             .birthday-date-badge {
                 font-size: 0.9em;
                 padding: 10px 20px;
@@ -2094,10 +2098,6 @@
 
         /* Tablet optimization */
         @media (min-width: 769px) and (max-width: 1024px) {
-            .welcome-text {
-                font-size: 3em;
-            }
-
             .profile-photo {
                 width: 160px;
                 height: 160px;
@@ -2110,25 +2110,9 @@
                 font-size: 45px;
             }
 
-            h1 {
-                font-size: 2.4em;
-            }
-
-            .recipient {
-                font-size: 1.7em;
-            }
-
             .card {
                 max-width: 650px;
                 padding: 45px 35px;
-            }
-
-            .message {
-                font-size: 1.1em;
-            }
-
-            .icon {
-                font-size: 80px;
             }
         }
 
@@ -2158,10 +2142,6 @@
 
         /* Small mobile devices */
         @media (max-width: 480px) {
-            .welcome-text {
-                font-size: 1.8em;
-            }
-
             .profile-photo {
                 width: 120px;
                 height: 120px;
@@ -2173,20 +2153,8 @@
                 font-size: 36px;
             }
 
-            h1 {
-                font-size: 1.6em;
-            }
-
-            .recipient {
-                font-size: 1.2em;
-            }
-
             .card {
                 padding: 25px 18px;
-            }
-
-            .message {
-                font-size: 0.95em;
             }
 
             .memory-list li {
@@ -3077,7 +3045,7 @@
                     Dengan penuh rasa hormat, terima kasih, dan doa terbaik<br>
                     🙏💖
                     <br><br>
-                    <strong>~ Muhammad Fawwaz Rayyan Khalish ~</strong>
+                    <strong>~ Muhammad Fawwaz Rayyan K ~</strong>
                 </div>
 
                 <button class="interactive-btn" id="https://auliaevawanilarissa.netlify.app/" type="button" onclick="sharePage()">🔗 Bagikan Halaman Ini</button>
